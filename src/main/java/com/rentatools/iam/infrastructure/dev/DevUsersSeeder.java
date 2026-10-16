@@ -1,6 +1,6 @@
 package com.rentatools.iam.infrastructure.dev;
 
-import com.rentatools.iam.infrastructure.adapter.in.api.JdbcUserDirectory;
+import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Instant;
@@ -62,7 +62,7 @@ public class DevUsersSeeder implements ApplicationRunner {
             String roleCode,
             Instant now
     ) {
-        byte[] idBytes = JdbcUserDirectory.uuidToBytes(id);
+        byte[] idBytes = uuidToBytes(id);
         Timestamp ts = Timestamp.from(now);
 
         jdbcTemplate.update(
@@ -89,8 +89,8 @@ public class DevUsersSeeder implements ApplicationRunner {
             UUID approvedBy,
             Instant now
     ) {
-        byte[] userBytes = JdbcUserDirectory.uuidToBytes(userId);
-        byte[] approverBytes = JdbcUserDirectory.uuidToBytes(approvedBy);
+        byte[] userBytes = uuidToBytes(userId);
+        byte[] approverBytes = uuidToBytes(approvedBy);
         Timestamp ts = Timestamp.from(now);
 
         jdbcTemplate.update(
@@ -100,5 +100,12 @@ public class DevUsersSeeder implements ApplicationRunner {
                 """,
                 userBytes, businessName, taxId, ts, approverBytes
         );
+    }
+
+    private static byte[] uuidToBytes(UUID uuid) {
+        ByteBuffer buffer = ByteBuffer.allocate(16);
+        buffer.putLong(uuid.getMostSignificantBits());
+        buffer.putLong(uuid.getLeastSignificantBits());
+        return buffer.array();
     }
 }

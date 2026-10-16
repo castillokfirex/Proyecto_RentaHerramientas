@@ -12,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
@@ -48,7 +49,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(DomainException.class)
     public ProblemDetail handleDomainException(DomainException ex, HttpServletRequest request) {
-        return buildProblem(HttpStatus.CONFLICT, "Domain Error", ex.code(), ex.getMessage(), request);
+        HttpStatus status = switch (ex.code()) {
+            case "INVALID_CREDENTIALS", "INVALID_REFRESH_TOKEN" -> HttpStatus.UNAUTHORIZED;
+            case "USER_SUSPENDED" -> HttpStatus.FORBIDDEN;
+            default -> HttpStatus.CONFLICT;
+        };
+        return buildProblem(status, status.getReasonPhrase(), ex.code(), ex.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -75,6 +81,17 @@ public class GlobalExceptionHandler {
                 "Validation Error",
                 "VALIDATION_ERROR",
                 ex.getMessage(),
+                request
+        );
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ProblemDetail handleMessageNotReadable(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        return buildProblem(
+                HttpStatus.BAD_REQUEST,
+                "Bad Request",
+                "MALFORMED_REQUEST",
+                "Malformed JSON request body",
                 request
         );
     }
