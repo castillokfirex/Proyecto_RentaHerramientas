@@ -253,6 +253,24 @@ public final class Invoice extends AggregateRoot {
     }
 
     /**
+     * Reasigna el número de factura en caso de colisión de concurrencia durante la emisión inicial.
+     */
+    public void reassignNumber(InvoiceNumber assignedNumber) {
+        Objects.requireNonNull(assignedNumber, "assignedNumber must not be null");
+        if (!isIssued()) {
+            throw new BusinessRuleViolation(
+                    "CANNOT_REASSIGN_NUMBER",
+                    "Can only reassign number on an ISSUED invoice during emission retry"
+            );
+        }
+        this.number = assignedNumber;
+        if (this.type == InvoiceType.RENTAL && !domainEvents().isEmpty()) {
+            pullDomainEvents();
+            registerEvent(RentalInvoiceIssued.of(this.id, this.reservationId, this.number, total(), this.issuedAt));
+        }
+    }
+
+    /**
      * Anula una factura emitida registrando {@code voidedAt}.
      */
     public void voidInvoice(Instant voidedTimestamp) {
