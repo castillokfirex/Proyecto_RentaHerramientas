@@ -1,0 +1,17 @@
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+app:
+  jwt:
+    secret: dev-only-hs256-secret-key-for-local-testing-at-least-32-bytes
+  storage:
+    location: ./target/dev-uploads
+
+logging:
+  level:
+    com.rentatools: DEBUG
+    org.springframework.security: INFO

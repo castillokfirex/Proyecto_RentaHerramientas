@@ -1,0 +1,145 @@
+{
+  "info": {
+    "name": "10 · IAM",
+    "description": "Colección Postman del contexto IAM y utilidades de desarrollo (A0b/A2).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Dev Support (A0)",
+      "item": [
+        {
+          "name": "Emitir Dev Token (CLIENTE)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "pm.test('Devuelve accessToken y rol CLIENTE', function () {",
+                  "    pm.expect(body.accessToken).to.be.a('string').and.not.empty;",
+                  "    pm.expect(body.roles).to.include('CLIENTE');",
+                  "});",
+                  "pm.environment.set('clientToken', body.accessToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"{{devClientUserId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dev/token",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "dev", "token"]
+            }
+          }
+        },
+        {
+          "name": "Whoami (@CurrentActor)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "const body = pm.response.json();",
+                  "pm.test('Actor coincide con devClientUserId', function () {",
+                  "    pm.expect(body.userId).to.eql(pm.environment.get('devClientUserId'));",
+                  "    pm.expect(body.roles).to.include('CLIENTE');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                { "key": "token", "value": "{{clientToken}}", "type": "string" }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dev/whoami",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "dev", "whoami"]
+            }
+          }
+        },
+        {
+          "name": "Adelantar reloj dev (+2 días)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK y offsetDays = 2', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json().offsetDays).to.eql(2);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"offsetDays\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dev/clock",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "dev", "clock"]
+            }
+          }
+        },
+        {
+          "name": "Reiniciar reloj dev",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200 OK y offsetDays = 0', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.expect(pm.response.json().offsetDays).to.eql(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/dev/clock",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "dev", "clock"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

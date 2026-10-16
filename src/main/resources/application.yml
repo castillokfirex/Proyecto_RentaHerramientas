@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: rentatools
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/rentatools?useUnicode=true&characterEncoding=utf8&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true}
+    username: ${DB_USERNAME:rentatools}
+    password: ${DB_PASSWORD:rentatools}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        type:
+          preferred_uuid_jdbc_type: BINARY
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+
+app:
+  currency: ${APP_CURRENCY:COP}
+  tax-rate: ${APP_TAX_RATE:0.18}
+  late-fee-multiplier: ${APP_LATE_FEE_MULTIPLIER:1.5}
+  timezone: ${APP_TIMEZONE:America/Lima}
+  cors:
+    allowed-origins:
+      - http://localhost:3000
+      - http://localhost:5173
+      - http://localhost:8080
+  jwt:
+    issuer: rentatools
+    secret: ${JWT_SECRET:rentatools-default-hs256-secret-key-at-least-32-bytes-long}
+    access-token-ttl: 15m
+    refresh-token-ttl: 7d
+  storage:
+    location: ${STORAGE_LOCATION:./target/uploads}
+  bootstrap:
+    admin-email: ${ADMIN_EMAIL:admin@rentatools.com}
+    admin-password: ${ADMIN_PASSWORD:Admin1234!}

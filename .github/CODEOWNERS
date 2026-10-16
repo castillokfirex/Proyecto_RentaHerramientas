@@ -1,0 +1,5 @@
+# Contratos compartidos, API de módulos, migraciones y POM requieren revisión de ambas pistas (A y B)
+/pom.xml @persona-a @persona-b
+/src/main/java/com/rentatools/shared/ @persona-a @persona-b
+/src/main/java/com/rentatools/*/api/ @persona-a @persona-b
+/src/main/resources/db/migration/ @persona-a @persona-b

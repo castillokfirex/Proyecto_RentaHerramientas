@@ -1,0 +1,9 @@
+spring:
+  jpa:
+    show-sql: false
+
+app:
+  jwt:
+    secret: test-only-hs256-secret-key-for-automated-tests-32-bytes-min
+  storage:
+    location: ./target/test-uploads
