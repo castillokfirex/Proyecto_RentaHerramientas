@@ -122,4 +122,12 @@ public class ReservationPersistenceAdapter implements ReservationRepository {
                 .toList();
         return PageResult.of(items, pageQuery.page(), pageQuery.size(), page.getTotalElements());
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Reservation> findByReservationUnitId(com.rentatools.rental.domain.model.reservation.ReservationUnitId reservationUnitId) {
+        Objects.requireNonNull(reservationUnitId, "reservationUnitId must not be null");
+        return springDataRepository.findByUnitsId(reservationUnitId.value())
+                .map(ReservationPersistenceMapper::toDomain);
+    }
 }

@@ -19,6 +19,7 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -482,6 +483,26 @@ public final class Reservation extends AggregateRoot {
      */
     public void markClosed(Clock clock) {
         close(clock);
+    }
+
+    public void recordDeliveredUnits(Collection<ReservationUnitId> unitIds) {
+        if (unitIds != null) {
+            this.deliveredUnitIds.addAll(unitIds);
+        }
+    }
+
+    public void recordReturnedUnits(Collection<ReservationUnitId> unitIds) {
+        if (unitIds != null) {
+            this.returnedUnitIds.addAll(unitIds);
+        }
+    }
+
+    public Set<ReservationUnitId> deliveredUnitIds() {
+        return Collections.unmodifiableSet(deliveredUnitIds);
+    }
+
+    public Set<ReservationUnitId> returnedUnitIds() {
+        return Collections.unmodifiableSet(returnedUnitIds);
     }
 
     /**

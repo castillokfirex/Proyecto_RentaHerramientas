@@ -4,7 +4,9 @@ import com.rentatools.rental.application.dto.ReservationView;
 import com.rentatools.rental.application.mapper.IntegrationEventMapper;
 import com.rentatools.rental.application.mapper.ReservationViewMapper;
 import com.rentatools.rental.application.port.in.CancelReservationUseCase;
+import com.rentatools.rental.application.port.in.CloseReservationUseCase;
 import com.rentatools.rental.application.port.in.ConfirmReservationUseCase;
+import com.rentatools.rental.application.port.in.MarkClearedForDeliveryUseCase;
 import com.rentatools.rental.application.port.in.RejectReservationUseCase;
 import com.rentatools.rental.application.port.out.ReservationRepository;
 import com.rentatools.rental.application.port.out.ToolCatalogPort;
@@ -24,12 +26,15 @@ import java.util.UUID;
 /**
  * Servicio de aplicación que gestiona las transiciones del ciclo de vida de una reserva
  * solicitadas por proveedor o cliente ({@link ConfirmReservationUseCase}, {@link RejectReservationUseCase},
- * {@link CancelReservationUseCase}) y publica los eventos de integración hacia {@code billing}.
+ * {@link CancelReservationUseCase}) y eventos de integración de facturación ({@link MarkClearedForDeliveryUseCase},
+ * {@link CloseReservationUseCase}).
  */
 public class ReservationLifecycleService implements
         ConfirmReservationUseCase,
         RejectReservationUseCase,
-        CancelReservationUseCase {
+        CancelReservationUseCase,
+        MarkClearedForDeliveryUseCase,
+        CloseReservationUseCase {
 
     private final ReservationRepository reservationRepository;
     private final UnitInventoryPort unitInventoryPort;
@@ -104,6 +109,22 @@ public class ReservationLifecycleService implements
         integrationEventPublisher.publish(integrationEvent);
 
         return ReservationViewMapper.toView(saved, unitInventoryPort, toolCatalogPort);
+    }
+
+    @Override
+    public void markClearedForDelivery(UUID reservationId) {
+        Objects.requireNonNull(reservationId, "reservationId must not be null");
+        Reservation reservation = loadReservationOrThrow(reservationId);
+        reservation.markClearedForDelivery(clock);
+        reservationRepository.save(reservation);
+    }
+
+    @Override
+    public void closeReservation(UUID reservationId) {
+        Objects.requireNonNull(reservationId, "reservationId must not be null");
+        Reservation reservation = loadReservationOrThrow(reservationId);
+        reservation.close(clock);
+        reservationRepository.save(reservation);
     }
 
     private Reservation loadReservationOrThrow(UUID reservationId) {

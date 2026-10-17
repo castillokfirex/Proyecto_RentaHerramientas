@@ -28,4 +28,6 @@ public interface ReservationRepository {
     PageResult<Reservation> findByProvider(ProviderId providerId, ReservationStatus status, PageQuery pageQuery);
 
     PageResult<Reservation> findAll(ReservationStatus status, PageQuery pageQuery);
+
+    Optional<Reservation> findByReservationUnitId(com.rentatools.rental.domain.model.reservation.ReservationUnitId reservationUnitId);
 }

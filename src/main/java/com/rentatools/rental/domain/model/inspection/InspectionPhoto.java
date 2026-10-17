@@ -21,7 +21,7 @@ public record InspectionPhoto(
 
     public static final long MAX_SIZE_BYTES = 5_242_880L; // 5 MB
     private static final int MAX_STORAGE_KEY_LENGTH = 255;
-    private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
+    public static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "image/jpeg",
             "image/png",
             "image/webp"

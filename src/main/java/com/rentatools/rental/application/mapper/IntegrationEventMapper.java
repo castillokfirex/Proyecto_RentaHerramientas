@@ -6,6 +6,7 @@ import com.rentatools.rental.domain.model.reservation.ReservationStatus;
 import com.rentatools.shared.domain.Ids;
 import com.rentatools.shared.integration.rental.ReservationCancelled;
 import com.rentatools.shared.integration.rental.ReservationConfirmed;
+import com.rentatools.shared.integration.rental.ReservationReturned;
 import java.time.Clock;
 import java.util.ArrayList;
 import java.util.List;
@@ -76,6 +77,26 @@ public final class IntegrationEventMapper {
                 previousStatus.name(),
                 cancelledBy,
                 reason
+        );
+    }
+
+    public static ReservationReturned toReservationReturned(
+            Reservation reservation,
+            List<ReservationReturned.ReturnedUnit> units,
+            UUID registeredBy,
+            Clock clock
+    ) {
+        Objects.requireNonNull(reservation, "reservation must not be null");
+        Objects.requireNonNull(units, "units must not be null");
+        Objects.requireNonNull(registeredBy, "registeredBy must not be null");
+        Objects.requireNonNull(clock, "clock must not be null");
+
+        return new ReservationReturned(
+                Ids.newId(clock),
+                clock.instant(),
+                reservation.id().value(),
+                registeredBy,
+                units
         );
     }
 }

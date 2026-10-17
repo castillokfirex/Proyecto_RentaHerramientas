@@ -327,6 +327,13 @@ class RentalConfirmedIntegrationEventTest {
         }
 
         @Override
+        public Optional<Reservation> findByReservationUnitId(com.rentatools.rental.domain.model.reservation.ReservationUnitId reservationUnitId) {
+            return byId.values().stream()
+                    .filter(r -> r.findReservationUnit(reservationUnitId).isPresent())
+                    .findFirst();
+        }
+
+        @Override
         public Set<UnitId> findOccupiedUnits(Collection<UnitId> candidateUnitIds, DateRange dateRange) {
             Set<UnitId> candidates = Set.copyOf(candidateUnitIds);
             Set<UnitId> occupied = new LinkedHashSet<>();

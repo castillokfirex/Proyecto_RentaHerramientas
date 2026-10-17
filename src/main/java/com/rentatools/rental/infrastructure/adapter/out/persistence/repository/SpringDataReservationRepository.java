@@ -27,4 +27,6 @@ public interface SpringDataReservationRepository extends JpaRepository<Reservati
     Page<ReservationJpaEntity> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
     Page<ReservationJpaEntity> findByStatusOrderByCreatedAtDesc(String status, Pageable pageable);
+
+    Optional<ReservationJpaEntity> findByUnitsId(UUID reservationUnitId);
 }
