@@ -4,8 +4,12 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * Datos básicos de los partícipes de una reserva expuestos por el contexto {@code rental}
- * para verificación de permisos en otros contextos acotados (como {@code billing}).
+ * Datos basicos de los participantes asociados a una reserva de alquiler.
+ *
+ * @param reservationId Identificador unico de la reserva
+ * @param code Codigo alfanumerico legible de la reserva (ej. RES-2026-0001)
+ * @param clientId Identificador unico del usuario cliente
+ * @param providerId Identificador unico del usuario proveedor
  */
 public record ReservationParticipants(
         UUID reservationId,
