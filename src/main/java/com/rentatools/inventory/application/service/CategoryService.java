@@ -90,6 +90,23 @@ public class CategoryService implements CreateCategoryUseCase, UpdateCategoryUse
     }
 
     @Override
+    public CategoryView deactivateCategory(Actor actor, java.util.UUID categoryId) {
+        requireAdmin(actor);
+        Objects.requireNonNull(categoryId, "categoryId must not be null");
+
+        CategoryId id = CategoryId.of(categoryId);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(
+                        "CATEGORY_NOT_FOUND",
+                        "Category not found: " + id
+                ));
+
+        category.update(category.parentId(), category.name(), category.description(), false);
+        Category saved = categoryRepository.save(category);
+        return CategoryView.from(saved);
+    }
+
+    @Override
     public List<CategoryView> listCategories(boolean onlyActive) {
         return categoryRepository.findAll().stream()
                 .filter(cat -> !onlyActive || cat.active())

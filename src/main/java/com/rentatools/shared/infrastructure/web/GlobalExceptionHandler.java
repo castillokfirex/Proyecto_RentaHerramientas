@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     public ProblemDetail handleDomainException(DomainException ex, HttpServletRequest request) {
         HttpStatus status = switch (ex.code()) {
             case "INVALID_CREDENTIALS", "INVALID_REFRESH_TOKEN" -> HttpStatus.UNAUTHORIZED;
-            case "USER_SUSPENDED" -> HttpStatus.FORBIDDEN;
+            case "USER_SUSPENDED", "NOT_TOOL_OWNER", "NOT_RESERVATION_PARTICIPANT" -> HttpStatus.FORBIDDEN;
             default -> HttpStatus.CONFLICT;
         };
         return buildProblem(status, status.getReasonPhrase(), ex.code(), ex.getMessage(), request);
