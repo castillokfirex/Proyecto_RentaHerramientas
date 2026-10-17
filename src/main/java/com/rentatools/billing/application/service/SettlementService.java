@@ -18,7 +18,7 @@ import com.rentatools.billing.domain.model.invoice.InvoiceType;
 import com.rentatools.billing.domain.model.invoice.LineConcept;
 import com.rentatools.billing.domain.service.LateFeePolicy;
 import com.rentatools.billing.domain.service.SettlementCalculator;
-import com.rentatools.billing.domain.service.SettlementCalculator.SettlementResult;
+import com.rentatools.billing.domain.model.deposit.SettlementResult;
 import com.rentatools.shared.application.exception.NotFoundException;
 import com.rentatools.shared.application.port.out.IntegrationEventPublisher;
 import com.rentatools.shared.domain.BusinessRuleViolation;

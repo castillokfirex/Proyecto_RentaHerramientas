@@ -23,8 +23,8 @@ public class InspectionResultJpaEntity {
     private UUID inspectionId;
 
     @Id
-    @Column(name = "checklist_item_id", nullable = false)
-    private Integer checklistItemId;
+    @Column(name = "checklist_item_id", nullable = false, columnDefinition = "smallint unsigned")
+    private Short checklistItemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "inspection_id", nullable = false, insertable = false, updatable = false)
@@ -47,11 +47,11 @@ public class InspectionResultJpaEntity {
         this.inspectionId = inspectionId;
     }
 
-    public Integer getChecklistItemId() {
+    public Short getChecklistItemId() {
         return checklistItemId;
     }
 
-    public void setChecklistItemId(Integer checklistItemId) {
+    public void setChecklistItemId(Short checklistItemId) {
         this.checklistItemId = checklistItemId;
     }
 

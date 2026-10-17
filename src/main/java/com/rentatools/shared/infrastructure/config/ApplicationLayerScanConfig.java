@@ -15,7 +15,11 @@ import org.springframework.context.annotation.FilterType;
         useDefaultFilters = false,
         includeFilters = @Filter(
                 type = FilterType.REGEX,
-                pattern = "com\\.rentatools\\..*\\.(application\\.service|domain\\.service)\\..*"
+                pattern = "com\\.rentatools\\..*\\.(application\\.service|domain\\.service)\\.[^$]+"
+        ),
+        excludeFilters = @Filter(
+                type = FilterType.REGEX,
+                pattern = ".*\\$.*"
         )
 )
 public class ApplicationLayerScanConfig {

@@ -34,8 +34,8 @@ public class InspectionPhotoJpaEntity {
     @Column(name = "content_type", nullable = false, length = 30)
     private String contentType;
 
-    @Column(name = "size_bytes", nullable = false)
-    private long sizeBytes;
+    @Column(name = "size_bytes", nullable = false, columnDefinition = "int unsigned")
+    private int sizeBytes;
 
     @Column(name = "uploaded_at", nullable = false)
     private Instant uploadedAt;
@@ -88,6 +88,10 @@ public class InspectionPhotoJpaEntity {
     }
 
     public void setSizeBytes(long sizeBytes) {
+        this.sizeBytes = (int) sizeBytes;
+    }
+
+    public void setSizeBytes(int sizeBytes) {
         this.sizeBytes = sizeBytes;
     }
 

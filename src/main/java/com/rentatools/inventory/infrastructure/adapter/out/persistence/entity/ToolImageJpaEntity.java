@@ -31,11 +31,11 @@ public class ToolImageJpaEntity {
     @Column(name = "content_type", nullable = false, length = 30)
     private String contentType;
 
-    @Column(name = "size_bytes", nullable = false, columnDefinition = "INT UNSIGNED")
-    private long sizeBytes;
+    @Column(name = "size_bytes", nullable = false, columnDefinition = "int unsigned")
+    private int sizeBytes;
 
-    @Column(name = "position", nullable = false, columnDefinition = "SMALLINT UNSIGNED")
-    private int position;
+    @Column(name = "position", nullable = false, columnDefinition = "smallint unsigned")
+    private Short position;
 
     @Column(name = "uploaded_at", nullable = false)
     private Instant uploadedAt;
@@ -80,15 +80,23 @@ public class ToolImageJpaEntity {
     }
 
     public void setSizeBytes(long sizeBytes) {
+        this.sizeBytes = (int) sizeBytes;
+    }
+
+    public void setSizeBytes(int sizeBytes) {
         this.sizeBytes = sizeBytes;
     }
 
-    public int getPosition() {
+    public Short getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    public void setPosition(Short position) {
         this.position = position;
+    }
+
+    public void setPosition(int position) {
+        this.position = (short) position;
     }
 
     public Instant getUploadedAt() {

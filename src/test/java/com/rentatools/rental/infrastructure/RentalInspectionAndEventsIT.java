@@ -378,7 +378,7 @@ class RentalInspectionAndEventsIT extends AbstractMySqlIT {
         Actor adminActor = new Actor(Ids.newId(), Set.of(ActorRole.ADMIN));
 
         // Reporte 1: Top tools
-        List<TopToolReportView> topTools = rentalReportService.getTopTools(adminActor, 10);
+        List<TopToolReportView> topTools = rentalReportService.getTopTools(adminActor, 100);
         assertThat(topTools).isNotEmpty();
         TopToolReportView topTool = topTools.stream()
                 .filter(t -> t.toolId().equals(toolId))
@@ -389,7 +389,7 @@ class RentalInspectionAndEventsIT extends AbstractMySqlIT {
         assertThat(topTool.totalRentalDays()).isGreaterThanOrEqualTo(3L);
 
         // Reporte 2: Clientes frecuentes
-        List<FrequentClientReportView> frequentClients = rentalReportService.getFrequentClients(adminActor, 10);
+        List<FrequentClientReportView> frequentClients = rentalReportService.getFrequentClients(adminActor, 100);
         assertThat(frequentClients).isNotEmpty();
         FrequentClientReportView clientReport = frequentClients.stream()
                 .filter(c -> c.clientId().equals(clientId))
@@ -434,16 +434,16 @@ class RentalInspectionAndEventsIT extends AbstractMySqlIT {
 
     private void insertUser(UUID id, String fullName, String email, String role) {
         jdbcTemplate.update("""
-                INSERT INTO users (id, email, password_hash, full_name, active, created_at, updated_at)
-                VALUES (?, ?, 'hash', ?, TRUE, NOW(), NOW())
+                INSERT INTO users (id, email, password_hash, full_name, status, created_at, updated_at)
+                VALUES (?, ?, 'hash', ?, 'ACTIVE', NOW(), NOW())
                 ON DUPLICATE KEY UPDATE full_name = VALUES(full_name)
                 """,
                 toBytes(id), email, fullName
         );
         jdbcTemplate.update("""
-                INSERT INTO user_roles (user_id, role)
+                INSERT INTO user_roles (user_id, role_code)
                 VALUES (?, ?)
-                ON DUPLICATE KEY UPDATE role = VALUES(role)
+                ON DUPLICATE KEY UPDATE role_code = VALUES(role_code)
                 """,
                 toBytes(id), role
         );
@@ -451,17 +451,17 @@ class RentalInspectionAndEventsIT extends AbstractMySqlIT {
 
     private void insertProviderProfile(UUID providerId) {
         jdbcTemplate.update("""
-                INSERT INTO provider_profiles (user_id, company_name, tax_id, phone, address, approved_at, created_at, updated_at)
-                VALUES (?, 'Herramientas SA', 'RUC12345678', '555-1234', 'Av. Central 123', NOW(), NOW(), NOW())
-                ON DUPLICATE KEY UPDATE company_name = VALUES(company_name)
+                INSERT INTO provider_profiles (user_id, business_name, tax_id, approved_at, approved_by)
+                VALUES (?, 'Herramientas SA', 'RUC12345678', NOW(), ?)
+                ON DUPLICATE KEY UPDATE business_name = VALUES(business_name)
                 """,
-                toBytes(providerId)
+                toBytes(providerId), toBytes(providerId)
         );
     }
 
     private void insertTool(UUID toolId, UUID providerId, String name, String brand, String model) {
         jdbcTemplate.update("""
-                INSERT INTO tools (id, provider_id, name, brand, model, description, replacement_cost, status, created_at, updated_at)
+                INSERT INTO tools (id, provider_id, name, brand, model, description, deposit_amount, status, created_at, updated_at)
                 VALUES (?, ?, ?, ?, ?, 'Descripción', 300.00, 'ACTIVE', NOW(), NOW())
                 ON DUPLICATE KEY UPDATE name = VALUES(name)
                 """,
@@ -478,8 +478,8 @@ class RentalInspectionAndEventsIT extends AbstractMySqlIT {
 
     private void insertToolUnit(UUID unitId, UUID toolId, String serialNumber, String status) {
         jdbcTemplate.update("""
-                INSERT INTO tool_units (id, tool_id, serial_number, status, created_at, updated_at)
-                VALUES (?, ?, ?, ?, NOW(), NOW())
+                INSERT INTO tool_units (id, tool_id, serial_number, status, created_at)
+                VALUES (?, ?, ?, ?, NOW())
                 ON DUPLICATE KEY UPDATE status = VALUES(status)
                 """,
                 toBytes(unitId), toBytes(toolId), serialNumber, status

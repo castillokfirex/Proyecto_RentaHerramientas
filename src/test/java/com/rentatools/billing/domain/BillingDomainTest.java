@@ -10,6 +10,7 @@ import com.rentatools.billing.domain.exception.OverpaymentException;
 import com.rentatools.billing.domain.model.deposit.DepositTransactionKind;
 import com.rentatools.billing.domain.model.deposit.Retention;
 import com.rentatools.billing.domain.model.deposit.SecurityDeposit;
+import com.rentatools.billing.domain.model.deposit.SettlementResult;
 import com.rentatools.billing.domain.model.invoice.Invoice;
 import com.rentatools.billing.domain.model.invoice.InvoiceId;
 import com.rentatools.billing.domain.model.invoice.InvoiceLine;
@@ -74,8 +75,8 @@ class BillingDomainTest {
 
             List<DomainEvent> events = invoice.pullDomainEvents();
             assertThat(events).hasSize(1);
-            assertThat(events.getFirst()).isInstanceOf(RentalInvoiceIssued.class);
-            RentalInvoiceIssued issuedEvent = (RentalInvoiceIssued) events.getFirst();
+            assertThat(events.get(0)).isInstanceOf(RentalInvoiceIssued.class);
+            RentalInvoiceIssued issuedEvent = (RentalInvoiceIssued) events.get(0);
             assertThat(issuedEvent.invoiceId()).isEqualTo(invoice.id());
             assertThat(issuedEvent.reservationId()).isEqualTo(reservationId);
             assertThat(issuedEvent.number()).isEqualTo(InvoiceNumber.of(1001L));
@@ -356,7 +357,7 @@ class BillingDomainTest {
             Invoice settlement = Invoice.createDraft(reservationId, InvoiceType.SETTLEMENT, TAX_RATE_19, T1);
             settlement.addLine(unitId, LineConcept.DAMAGE, "Reparación carcasa", 1L, Money.of("100000"));
 
-            SettlementCalculator.SettlementResult result = settlementCalculator.settle(
+            SettlementResult result = settlementCalculator.settle(
                     settlement,
                     InvoiceNumber.of(2001L),
                     deposit,
@@ -387,8 +388,8 @@ class BillingDomainTest {
 
             List<DomainEvent> events = deposit.pullDomainEvents();
             assertThat(events).hasSize(1);
-            assertThat(events.getFirst()).isInstanceOf(SettlementCompleted.class);
-            SettlementCompleted completed = (SettlementCompleted) events.getFirst();
+            assertThat(events.get(0)).isInstanceOf(SettlementCompleted.class);
+            SettlementCompleted completed = (SettlementCompleted) events.get(0);
             assertThat(completed.retainedFromDeposit()).isEqualTo(Money.of("119000.00"));
             assertThat(completed.refundedFromDeposit()).isEqualTo(Money.of("81000.00"));
             assertThat(completed.extraChargesTotal()).isEqualTo(Money.of("119000.00"));
@@ -411,7 +412,7 @@ class BillingDomainTest {
             Invoice settlement = Invoice.createDraft(reservationId, InvoiceType.SETTLEMENT, TAX_RATE_19, T1);
             settlement.addLine(unitId, LineConcept.DAMAGE, "Pérdida de accesorio y daño", 1L, Money.of("200000"));
 
-            SettlementCalculator.SettlementResult result = settlementCalculator.settle(
+            SettlementResult result = settlementCalculator.settle(
                     settlement,
                     InvoiceNumber.of(2002L),
                     deposit,
@@ -467,7 +468,7 @@ class BillingDomainTest {
 
             Invoice emptySettlementDraft = Invoice.createDraft(reservationId, InvoiceType.SETTLEMENT, TAX_RATE_19, T1);
 
-            SettlementCalculator.SettlementResult result = settlementCalculator.settle(
+            SettlementResult result = settlementCalculator.settle(
                     emptySettlementDraft,
                     null,
                     deposit,

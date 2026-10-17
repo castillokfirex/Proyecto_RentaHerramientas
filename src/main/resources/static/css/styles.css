@@ -1,0 +1,190 @@
+:root {
+    --rt-primary: #f59e0b;
+    --rt-primary-hover: #d97706;
+    --rt-dark: #0f172a;
+    --rt-slate: #1e293b;
+    --rt-muted: #64748b;
+    --rt-bg: #f8fafc;
+    --rt-card-border: #e2e8f0;
+}
+
+body {
+    background-color: var(--rt-bg);
+    color: var(--rt-dark);
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.rt-navbar {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.18);
+}
+
+.rt-brand-badge {
+    background-color: var(--rt-primary);
+    color: #0f172a;
+    font-weight: 800;
+    padding: 0.25rem 0.55rem;
+    border-radius: 0.375rem;
+    letter-spacing: -0.02em;
+}
+
+/* Hero Banner */
+.rt-hero {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: #fff;
+    border-bottom: 4px solid var(--rt-primary);
+}
+
+/* Cards */
+.rt-card {
+    border: 1px solid var(--rt-card-border);
+    border-radius: 0.75rem;
+    background: #fff;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.rt-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px -6px rgba(15, 23, 42, 0.12);
+}
+
+.rt-tool-img-wrapper {
+    height: 195px;
+    background: #f1f5f9;
+    border-top-left-radius: 0.75rem;
+    border-top-right-radius: 0.75rem;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rt-tool-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.rt-tool-placeholder {
+    font-size: 3rem;
+    color: #94a3b8;
+}
+
+/* Category Tree */
+.rt-category-tree .list-group-item {
+    border: none;
+    border-radius: 0.5rem;
+    margin-bottom: 0.2rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.92rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.rt-category-tree .list-group-item:hover {
+    background-color: #f1f5f9;
+}
+
+.rt-category-tree .list-group-item.active {
+    background-color: var(--rt-primary);
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.rt-category-child {
+    padding-left: 1.75rem !important;
+    font-size: 0.87rem !important;
+}
+
+/* Rate Pills */
+.rt-rate-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    text-align: center;
+}
+
+.rt-rate-box .rt-rate-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    color: var(--rt-muted);
+    font-weight: 600;
+    display: block;
+}
+
+.rt-rate-box .rt-rate-val {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--rt-dark);
+}
+
+/* Reservation Code Badge */
+.rt-code-badge {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 0.25rem 0.65rem;
+    border-radius: 0.375rem;
+    font-size: 0.88rem;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+}
+
+/* Status Badges */
+.badge-status-PENDING { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+.badge-status-CONFIRMED { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+.badge-status-READY_FOR_PICKUP { background-color: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+.badge-status-ACTIVE { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+.badge-status-RETURNED { background-color: #f3e8ff; color: #6b21a8; border: 1px solid #e9d5ff; }
+.badge-status-CLOSED { background-color: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
+.badge-status-REJECTED,
+.badge-status-CANCELLED { background-color: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+
+.badge-tool-DRAFT { background-color: #fef3c7; color: #92400e; }
+.badge-tool-ACTIVE { background-color: #dcfce7; color: #166534; }
+.badge-tool-INACTIVE { background-color: #f1f5f9; color: #475569; }
+
+.badge-unit-AVAILABLE { background-color: #dcfce7; color: #166534; }
+.badge-unit-MAINTENANCE { background-color: #ffedd5; color: #9a3412; }
+.badge-unit-RETIRED { background-color: #fee2e2; color: #991b1b; }
+
+/* ProblemDetail Alert Container */
+#rt-alert-container {
+    position: fixed;
+    top: 4.5rem;
+    right: 1.25rem;
+    z-index: 1085;
+    max-width: 460px;
+    width: calc(100% - 2.5rem);
+}
+
+.rt-problem-alert {
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.22);
+    border-left: 5px solid #dc2626;
+    border-radius: 0.5rem;
+}
+
+/* Primary Accent Button */
+.btn-rt-primary {
+    background-color: var(--rt-primary);
+    border-color: var(--rt-primary);
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.btn-rt-primary:hover, .btn-rt-primary:focus {
+    background-color: var(--rt-primary-hover);
+    border-color: var(--rt-primary-hover);
+    color: #0f172a;
+}
+
+/* Checklist table */
+.rt-checklist-row td {
+    vertical-align: middle;
+}

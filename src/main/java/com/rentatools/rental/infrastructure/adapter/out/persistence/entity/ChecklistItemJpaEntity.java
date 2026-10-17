@@ -16,8 +16,8 @@ public class ChecklistItemJpaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    @Column(name = "id", nullable = false, columnDefinition = "smallint unsigned")
+    private Short id;
 
     @Column(name = "code", nullable = false, unique = true, length = 40)
     private String code;
@@ -31,11 +31,11 @@ public class ChecklistItemJpaEntity {
     public ChecklistItemJpaEntity() {
     }
 
-    public Integer getId() {
+    public Short getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Short id) {
         this.id = id;
     }
 

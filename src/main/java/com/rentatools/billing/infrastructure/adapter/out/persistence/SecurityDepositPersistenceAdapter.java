@@ -8,6 +8,7 @@ import com.rentatools.billing.infrastructure.adapter.out.persistence.entity.Secu
 import com.rentatools.billing.infrastructure.adapter.out.persistence.mapper.SecurityDepositPersistenceMapper;
 import com.rentatools.billing.infrastructure.adapter.out.persistence.repository.SpringDataDepositRetentionRepository;
 import com.rentatools.billing.infrastructure.adapter.out.persistence.repository.SpringDataSecurityDepositRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +26,7 @@ public class SecurityDepositPersistenceAdapter implements SecurityDepositReposit
     private final SpringDataDepositRetentionRepository springDataDepositRetentionRepository;
     private final SecurityDepositPersistenceMapper mapper;
 
+    @Autowired
     public SecurityDepositPersistenceAdapter(
             SpringDataSecurityDepositRepository springDataSecurityDepositRepository,
             SpringDataDepositRetentionRepository springDataDepositRetentionRepository,

@@ -346,6 +346,9 @@ public final class Reservation extends AggregateRoot {
      */
     public void markClearedForDelivery(Clock clock) {
         Objects.requireNonNull(clock, "clock must not be null");
+        if (this.status == ReservationStatus.READY_FOR_PICKUP) {
+            return;
+        }
         if (this.status != ReservationStatus.CONFIRMED) {
             throw new InvalidReservationTransitionException(this.status, ReservationStatus.READY_FOR_PICKUP);
         }
@@ -471,6 +474,9 @@ public final class Reservation extends AggregateRoot {
      */
     public void close(Clock clock) {
         Objects.requireNonNull(clock, "clock must not be null");
+        if (this.status == ReservationStatus.CLOSED) {
+            return;
+        }
         if (this.status != ReservationStatus.RETURNED) {
             throw new InvalidReservationTransitionException(this.status, ReservationStatus.CLOSED);
         }

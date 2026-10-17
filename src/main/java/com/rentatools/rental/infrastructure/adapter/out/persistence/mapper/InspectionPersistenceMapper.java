@@ -34,7 +34,7 @@ public final class InspectionPersistenceMapper {
         if (entity.getResults() != null) {
             for (InspectionResultJpaEntity r : entity.getResults()) {
                 domainResults.add(ChecklistResult.of(
-                        ChecklistItemId.of(r.getChecklistItemId()),
+                        ChecklistItemId.of(r.getChecklistItemId() != null ? r.getChecklistItemId().intValue() : 0),
                         ResultValue.valueOf(r.getResult()),
                         r.getNote()
                 ));
@@ -83,7 +83,7 @@ public final class InspectionPersistenceMapper {
         for (ChecklistResult r : domain.results()) {
             InspectionResultJpaEntity re = new InspectionResultJpaEntity();
             re.setInspectionId(domain.id().value());
-            re.setChecklistItemId(r.checklistItemId().value());
+            re.setChecklistItemId((short) r.checklistItemId().value());
             re.setResult(r.result().name());
             re.setNote(r.note());
             re.setInspection(entity);
@@ -115,7 +115,7 @@ public final class InspectionPersistenceMapper {
         managed.setOverallCondition(domain.overallCondition().name());
         managed.setObservations(domain.observations());
 
-        // Sincronizar fotos añadidas
+        // Sincronizar fotos anadidas
         Set<UUID> existingPhotoIds = managed.getPhotos().stream()
                 .map(InspectionPhotoJpaEntity::getId)
                 .collect(Collectors.toSet());

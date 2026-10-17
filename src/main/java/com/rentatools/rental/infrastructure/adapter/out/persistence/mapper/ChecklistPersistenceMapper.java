@@ -16,7 +16,7 @@ public final class ChecklistPersistenceMapper {
     public static ChecklistItem toDomain(ChecklistItemJpaEntity entity) {
         Objects.requireNonNull(entity, "entity must not be null");
         return ChecklistItem.reconstruct(
-                ChecklistItemId.of(entity.getId()),
+                ChecklistItemId.of(entity.getId() != null ? entity.getId().intValue() : 0),
                 entity.getCode(),
                 entity.getLabel(),
                 entity.isActive()
@@ -27,7 +27,7 @@ public final class ChecklistPersistenceMapper {
         Objects.requireNonNull(domain, "domain must not be null");
         ChecklistItemJpaEntity entity = new ChecklistItemJpaEntity();
         if (domain.id() != null) {
-            entity.setId(domain.id().value());
+            entity.setId((short) domain.id().value());
         }
         entity.setCode(domain.code());
         entity.setLabel(domain.label());

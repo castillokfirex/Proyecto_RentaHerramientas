@@ -30,7 +30,7 @@ public class ChecklistPersistenceAdapter implements ChecklistItemRepository {
         Objects.requireNonNull(item, "item must not be null");
         ChecklistItemJpaEntity saved;
         if (item.id() != null) {
-            Optional<ChecklistItemJpaEntity> existing = repository.findById(item.id().value());
+            Optional<ChecklistItemJpaEntity> existing = repository.findById((short) item.id().value());
             if (existing.isPresent()) {
                 ChecklistItemJpaEntity managed = existing.get();
                 ChecklistPersistenceMapper.updateManagedEntity(managed, item);
@@ -48,7 +48,7 @@ public class ChecklistPersistenceAdapter implements ChecklistItemRepository {
     @Transactional(readOnly = true)
     public Optional<ChecklistItem> findById(ChecklistItemId id) {
         Objects.requireNonNull(id, "id must not be null");
-        return repository.findById(id.value())
+        return repository.findById((short) id.value())
                 .map(ChecklistPersistenceMapper::toDomain);
     }
 

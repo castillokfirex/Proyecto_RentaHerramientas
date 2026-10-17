@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 /**
  * Repositorio Spring Data JPA para {@link ChecklistItemJpaEntity}.
  */
-public interface SpringDataChecklistItemRepository extends JpaRepository<ChecklistItemJpaEntity, Integer> {
+public interface SpringDataChecklistItemRepository extends JpaRepository<ChecklistItemJpaEntity, Short> {
 
     Optional<ChecklistItemJpaEntity> findByCode(String code);
 

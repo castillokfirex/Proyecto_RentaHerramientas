@@ -10,12 +10,12 @@ import java.util.UUID;
 public class InspectionResultId implements Serializable {
 
     private UUID inspectionId;
-    private Integer checklistItemId;
+    private Short checklistItemId;
 
     public InspectionResultId() {
     }
 
-    public InspectionResultId(UUID inspectionId, Integer checklistItemId) {
+    public InspectionResultId(UUID inspectionId, Short checklistItemId) {
         this.inspectionId = inspectionId;
         this.checklistItemId = checklistItemId;
     }
@@ -28,11 +28,11 @@ public class InspectionResultId implements Serializable {
         this.inspectionId = inspectionId;
     }
 
-    public Integer getChecklistItemId() {
+    public Short getChecklistItemId() {
         return checklistItemId;
     }
 
-    public void setChecklistItemId(Integer checklistItemId) {
+    public void setChecklistItemId(Short checklistItemId) {
         this.checklistItemId = checklistItemId;
     }
 

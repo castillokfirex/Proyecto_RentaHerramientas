@@ -7,6 +7,7 @@ import com.rentatools.billing.domain.model.invoice.InvoiceType;
 import com.rentatools.billing.infrastructure.adapter.out.persistence.entity.InvoiceJpaEntity;
 import com.rentatools.billing.infrastructure.adapter.out.persistence.mapper.InvoicePersistenceMapper;
 import com.rentatools.billing.infrastructure.adapter.out.persistence.repository.SpringDataInvoiceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class InvoicePersistenceAdapter implements InvoiceRepository {
     private final SpringDataInvoiceRepository springDataInvoiceRepository;
     private final InvoicePersistenceMapper mapper;
 
+    @Autowired
     public InvoicePersistenceAdapter(
             SpringDataInvoiceRepository springDataInvoiceRepository,
             InvoicePersistenceMapper mapper

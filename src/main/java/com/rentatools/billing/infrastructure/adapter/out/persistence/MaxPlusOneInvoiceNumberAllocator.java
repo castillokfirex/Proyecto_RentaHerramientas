@@ -5,6 +5,7 @@ import com.rentatools.billing.application.port.out.InvoiceRepository;
 import com.rentatools.billing.domain.model.invoice.Invoice;
 import com.rentatools.billing.domain.model.invoice.InvoiceNumber;
 import com.rentatools.billing.infrastructure.adapter.out.persistence.repository.SpringDataInvoiceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.PessimisticLockingFailureException;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ public class MaxPlusOneInvoiceNumberAllocator implements InvoiceNumberAllocator 
     private final ReentrantLock allocationLock = new ReentrantLock();
     private final int maxRetries;
 
+    @Autowired
     public MaxPlusOneInvoiceNumberAllocator(SpringDataInvoiceRepository springDataInvoiceRepository) {
         this(springDataInvoiceRepository, DEFAULT_MAX_RETRIES);
     }
