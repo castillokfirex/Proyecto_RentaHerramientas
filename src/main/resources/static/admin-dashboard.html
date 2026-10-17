@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | RentaTools</title>
+    <!-- Bootstrap 5.3 CSS & Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar Dinámica -->
+    <header id="rt-navbar-host"></header>
+
+    <!-- Contenedor de Alertas ProblemDetail (RFC 9457) -->
+    <div id="rt-alert-container" aria-live="polite"></div>
+
+    <!-- Hero -->
+    <section class="rt-hero py-4">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <span class="badge bg-warning text-dark mb-1 fw-semibold">
+                    <i class="bi bi-shield-fill-check me-1"></i>Consola de Gobierno (ADMIN)
+                </span>
+                <h1 class="h3 fw-bold mb-1">Panel de Administración e Indicadores Financieros</h1>
+                <p class="text-white-50 small mb-0">
+                    Control de usuarios, homologación de proveedores, métricas de ingresos (BILLING) y analítica operativa.
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                <button type="button" id="refreshAdminDashboardBtn" class="btn btn-rt-primary btn-sm">
+                    <i class="bi bi-arrow-clockwise me-1"></i>Actualizar Panel
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <main class="container my-4 flex-grow-1">
+        <!-- Aviso de Protección RBAC si no es ADMIN -->
+        <div id="adminAccessDeniedCard" class="card rt-card p-5 text-center d-none mb-4">
+            <i class="bi bi-shield-slash display-5 text-danger mb-2"></i>
+            <h2 class="h5 fw-bold">Acceso Restringido a Administradores (ADMIN)</h2>
+            <p class="text-muted small mb-3">
+                Esta interfaz está protegida y requiere una sesión activa con el rol <strong>ADMIN</strong>.
+            </p>
+            <div>
+                <a href="auth.html" class="btn btn-rt-primary">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión como Administrador
+                </a>
+            </div>
+        </div>
+
+        <div id="adminProtectedContent">
+            <!-- SECCIÓN 1: TARJETAS Y TABLAS DE MÉTRICAS FINANCIERAS (GET /api/v1/admin/reports/revenue) -->
+            <section class="mb-4">
+                <div class="card rt-card p-3 mb-3">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                        <div>
+                            <h2 class="h6 fw-bold mb-0">
+                                <i class="bi bi-graph-up-arrow text-warning me-2"></i>Métricas Financieras y Recaudación (`GET /api/v1/admin/reports/revenue`)
+                            </h2>
+                        </div>
+                        <form id="revenueDateFilterForm" class="d-flex flex-wrap align-items-center gap-2">
+                            <label for="revFromDate" class="small text-muted mb-0">Desde:</label>
+                            <input type="date" id="revFromDate" class="form-control form-control-sm" style="width: 145px;">
+                            <label for="revToDate" class="small text-muted mb-0">Hasta:</label>
+                            <input type="date" id="revToDate" class="form-control form-control-sm" style="width: 145px;">
+                            <button type="submit" class="btn btn-sm btn-dark">
+                                <i class="bi bi-funnel me-1"></i>Filtrar
+                            </button>
+                            <button type="button" id="clearRevFilterBtn" class="btn btn-sm btn-outline-secondary">
+                                Histórico Total
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Cards Financieras -->
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-3 mb-3">
+                    <div class="col">
+                        <div class="card rt-kpi-card p-3 h-100">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-muted fw-semibold text-uppercase">Total Facturado</div>
+                                    <div class="h4 fw-bold mb-0 mt-1" id="kpiTotalInvoiced">S/ 0.00</div>
+                                    <div class="small text-muted mt-1">Facturas RENTAL + SETTLEMENT</div>
+                                </div>
+                                <span class="rt-kpi-icon bg-primary-subtle text-primary">
+                                    <i class="bi bi-file-earmark-spreadsheet"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card rt-kpi-card p-3 h-100" style="border-left-color: #16a34a;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-muted fw-semibold text-uppercase">Total Recaudado Neto</div>
+                                    <div class="h4 fw-bold text-success mb-0 mt-1" id="kpiTotalCollected">S/ 0.00</div>
+                                    <div class="small text-muted mt-1">Pagos recibidos − reembolsos</div>
+                                </div>
+                                <span class="rt-kpi-icon bg-success-subtle text-success">
+                                    <i class="bi bi-cash-stack"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card rt-kpi-card p-3 h-100" style="border-left-color: #dc2626;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-muted fw-semibold text-uppercase">Garantías Retenidas</div>
+                                    <div class="h4 fw-bold text-danger mb-0 mt-1" id="kpiDepositsRetained">S/ 0.00</div>
+                                    <div class="small text-muted mt-1">Aplicadas por mora o daños</div>
+                                </div>
+                                <span class="rt-kpi-icon bg-danger-subtle text-danger">
+                                    <i class="bi bi-shield-exclamation"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="card rt-kpi-card p-3 h-100" style="border-left-color: #6366f1;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <div class="small text-muted fw-semibold text-uppercase">Garantías Reembolsadas</div>
+                                    <div class="h4 fw-bold text-primary mb-0 mt-1" id="kpiDepositsRefunded">S/ 0.00</div>
+                                    <div class="small text-muted mt-1">Devueltas al cliente al liquidar</div>
+                                </div>
+                                <span class="rt-kpi-icon bg-info-subtle text-info">
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla Desglose por Método de Pago -->
+                <div class="card rt-card p-3">
+                    <h3 class="h6 fw-bold mb-2">
+                        <i class="bi bi-credit-card-2-front text-warning me-2"></i>Desglose de Recaudación por Medio de Pago
+                    </h3>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle small mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Medio de Pago (`PaymentMethod`)</th>
+                                    <th>Descripción</th>
+                                    <th class="text-end">Monto Neto Recaudado</th>
+                                    <th class="text-end" style="width: 200px;">Participación</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentMethodBreakdownBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 2: BANDEJA DE SOLICITUDES DE PROVEEDORES PENDIENTES -->
+            <section class="mb-4">
+                <div class="card rt-card p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h2 class="h6 fw-bold mb-0">
+                            <i class="bi bi-building-exclamation text-warning me-2"></i>Bandeja de Solicitudes de Proveedores Pendientes de Aprobación
+                            <span id="pendingProvidersCountBadge" class="badge bg-warning text-dark ms-1">0</span>
+                        </h2>
+                        <span class="small text-muted">Endpoint: <code>POST /api/v1/admin/providers/{id}/approve</code></span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle small mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Razón Social (`businessName`)</th>
+                                    <th>NIT / RUC (`taxId`)</th>
+                                    <th>Representante</th>
+                                    <th>Correo / Teléfono</th>
+                                    <th>Estado</th>
+                                    <th class="text-end">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingProvidersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 3: TABLA DE USUARIOS REGISTRADOS CON FILTROS Y ALTERNANCIA ACTIVE / SUSPENDED -->
+            <section class="mb-4">
+                <div class="card rt-card p-3">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+                        <div>
+                            <h2 class="h6 fw-bold mb-0">
+                                <i class="bi bi-people-fill text-warning me-2"></i>Directorio de Usuarios Registrados
+                                <span id="totalUsersBadge" class="badge bg-dark ms-1">0</span>
+                            </h2>
+                        </div>
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <input type="search" id="userSearchInput" class="form-control form-control-sm"
+                                   style="width: 210px;" placeholder="Buscar por nombre o email...">
+                            <select id="userRoleFilter" class="form-select form-select-sm" style="width: 155px;">
+                                <option value="">Todos los roles</option>
+                                <option value="ADMIN">Rol: ADMIN</option>
+                                <option value="PROVEEDOR">Rol: PROVEEDOR</option>
+                                <option value="CLIENTE">Rol: CLIENTE</option>
+                            </select>
+                            <select id="userStatusFilter" class="form-select form-select-sm" style="width: 155px;">
+                                <option value="">Todos los estados</option>
+                                <option value="ACTIVE">Estado: ACTIVE</option>
+                                <option value="SUSPENDED">Estado: SUSPENDED</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover align-middle small mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nombre Completo</th>
+                                    <th>Correo Electrónico</th>
+                                    <th>Roles</th>
+                                    <th>Perfil Proveedor</th>
+                                    <th>Estado Cuenta</th>
+                                    <th>Fecha Registro</th>
+                                    <th class="text-end">Alternar Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-top py-3 mt-auto">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center small text-muted">
+            <span><strong>RentaTools</strong> · Consola Administrativa IAM &amp; BILLING</span>
+            <span>Protegido por Rol ADMIN</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/admin-dashboard.js"></script>
+</body>
+</html>

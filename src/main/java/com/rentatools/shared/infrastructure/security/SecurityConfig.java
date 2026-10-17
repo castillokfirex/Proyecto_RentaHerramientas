@@ -39,25 +39,29 @@ public class SecurityConfig {
                         .authenticationEntryPoint(restAuthErrorHandlers)
                         .accessDeniedHandler(restAuthErrorHandlers))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST,
-                                "/api/v1/auth/register/client",
-                                "/api/v1/auth/register/provider",
-                                "/api/v1/auth/login",
-                                "/api/v1/auth/refresh",
-                                "/api/v1/dev/token"
+                        .requestMatchers(
+                                "/",
+                                "/*.html",
+                                "/*.css",
+                                "/*.js",
+                                "/css/**",
+                                "/js/**",
+                                "/favicon.ico",
+                                "/images/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**"
                         ).permitAll()
-                        .requestMatchers(HttpMethod.GET,
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/logout").authenticated()
+                        .requestMatchers(
+                                "/api/v1/auth/**",
                                 "/api/v1/catalog/**",
-                                "/api/v1/media/tools/**",
-                                "/api/v1/dev/clock"
+                                "/api/v1/media/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/dev/token").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/dev/clock").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/api/v1/dev/clock").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/api/v1/dev/clock").permitAll()
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter))

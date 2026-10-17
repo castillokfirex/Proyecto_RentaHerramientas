@@ -188,3 +188,67 @@ body {
 .rt-checklist-row td {
     vertical-align: middle;
 }
+
+/* KPI Metric Cards */
+.rt-kpi-card {
+    border: 1px solid var(--rt-card-border);
+    border-radius: 0.75rem;
+    background: #fff;
+    border-left: 4px solid var(--rt-primary);
+}
+
+.rt-kpi-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 0.65rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+}
+
+/* Invoice Printable Sheet */
+.rt-invoice-sheet {
+    background: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.75rem;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.badge-concept-RENTAL { background-color: #dbeafe; color: #1e40af; }
+.badge-concept-LATE_FEE { background-color: #fef3c7; color: #92400e; }
+.badge-concept-DAMAGE { background-color: #fee2e2; color: #991b1b; }
+
+@media print {
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    .d-print-none,
+    #rt-navbar-host,
+    #rt-alert-container,
+    footer {
+        display: none !important;
+    }
+
+    .rt-invoice-sheet {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .card {
+        border: 1px solid #dee2e6 !important;
+        box-shadow: none !important;
+    }
+}
+

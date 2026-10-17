@@ -1,7 +1,6 @@
 /**
- * RentaTools — Helper compartido de Autenticación JWT, Consumo de API (fetch)
- * y manejo de errores RFC 9457 (ProblemDetail).
- * Expuesto como módulo ES y en window.RentaToolsAuth para compatibilidad global.
+ * RentaTools — Helper compartido de Autenticación JWT, Consumo de API (fetch),
+ * redirección automática ante HTTP 401 a auth.html y manejo de errores RFC 9457 (ProblemDetail).
  */
 
 const TOKEN_KEYS = ['accessToken', 'jwt', 'token', 'rentatools_access_token'];
@@ -96,6 +95,8 @@ function normalizeUser(u) {
         id: u.id || u.userId || u.sub || null,
         email: u.email || '',
         fullName: u.fullName || u.name || u.email || 'Usuario',
+        phone: u.phone || null,
+        status: u.status || 'ACTIVE',
         roles,
         providerProfile: u.providerProfile || null
     };
@@ -120,6 +121,21 @@ export function hasRole(role) {
     if (!user || !Array.isArray(user.roles)) return false;
     const normalized = String(role).replace(/^ROLE_/, '').toUpperCase();
     return user.roles.includes(normalized);
+}
+
+export function getLandingPageForUser(user = getCurrentUser()) {
+    const roles = (user?.roles || []).map(r => String(r).replace(/^ROLE_/, '').toUpperCase());
+    if (roles.includes('ADMIN')) {
+        return 'admin-dashboard.html';
+    }
+    if (roles.includes('PROVEEDOR')) {
+        return 'provider-dashboard.html';
+    }
+    return 'catalog.html';
+}
+
+export function redirectByRole(user = getCurrentUser()) {
+    window.location.href = getLandingPageForUser(user);
 }
 
 export function saveSession({ accessToken, refreshToken, user }) {
@@ -154,7 +170,8 @@ export async function loginWithCredentials(email, password) {
     const data = await apiFetch('/api/v1/auth/login', {
         method: 'POST',
         body: JSON.stringify({ email, password }),
-        skipAuthHeader: true
+        skipAuthHeader: true,
+        skipAuthRedirect: true
     });
     saveSession({
         accessToken: data.accessToken,
@@ -182,16 +199,18 @@ export async function logout() {
         }
     }
     clearSession();
-    window.location.href = 'catalog.html';
+    window.location.href = 'auth.html';
 }
 
 /**
- * Wrapper sobre fetch() que adjunta Authorization: Bearer <JWT>
+ * Wrapper sobre fetch() que adjunta Authorization: Bearer <JWT>,
+ * redirige automáticamente a auth.html ante HTTP 401
  * y traduce errores RFC 9457 ProblemDetail a ProblemDetailError mostrando alerta visual.
  */
 export async function apiFetch(url, options = {}) {
     const {
         skipAuthHeader = false,
+        skipAuthRedirect = false,
         suppressErrorAlert = false,
         headers: customHeaders = {},
         ...restOptions
@@ -247,6 +266,18 @@ export async function apiFetch(url, options = {}) {
         }
 
         const err = new ProblemDetailError(problemPayload, response.status);
+
+        // Redirección automática a auth.html cuando la API responde 401 Unauthorized
+        if (response.status === 401 && !skipAuthRedirect) {
+            clearSession();
+            const isAlreadyOnAuthPage = window.location.pathname.endsWith('/auth.html') || window.location.pathname.endsWith('auth.html');
+            if (!isAlreadyOnAuthPage) {
+                const returnTo = encodeURIComponent(window.location.pathname.split('/').pop() + window.location.search);
+                window.location.href = `auth.html?expired=true&returnTo=${returnTo}`;
+                throw err;
+            }
+        }
+
         if (!suppressErrorAlert) {
             showProblemAlert(err);
         }
@@ -269,6 +300,11 @@ export async function fetchAuthenticatedBlobUrl(url) {
         headers['Authorization'] = `Bearer ${token}`;
     }
     const resp = await fetch(url, { headers });
+    if (resp.status === 401) {
+        clearSession();
+        window.location.href = 'auth.html';
+        throw new Error('Sesión expirada (401)');
+    }
     if (!resp.ok) {
         throw new Error(`No se pudo cargar recurso (${resp.status})`);
     }
@@ -391,8 +427,7 @@ export function formatDateTime(instantStr) {
 }
 
 /**
- * Renderiza la barra de navegación superior responsiva según el rol autenticado
- * e incluye un modal rápido de inicio de sesión / configuración de token JWT.
+ * Renderiza la barra de navegación superior responsiva según el rol autenticado.
  */
 export function renderNavbar(activePage = '') {
     const navHost = document.getElementById('rt-navbar-host');
@@ -409,7 +444,7 @@ export function renderNavbar(activePage = '') {
         : '';
 
     navHost.innerHTML = `
-        <nav class="navbar navbar-expand-lg navbar-dark rt-navbar sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-dark rt-navbar sticky-top d-print-none">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="catalog.html">
                     <span class="rt-brand-badge"><i class="bi bi-tools"></i> RT</span>
@@ -440,6 +475,13 @@ export function renderNavbar(activePage = '') {
                             </a>
                         </li>
                         ` : ''}
+                        ${(!authenticated || isAdmin) ? `
+                        <li class="nav-item">
+                            <a class="nav-link ${activePage === 'admin-dashboard' ? 'active fw-semibold text-warning' : ''}" href="admin-dashboard.html">
+                                <i class="bi bi-shield-check me-1"></i>Administración
+                            </a>
+                        </li>
+                        ` : ''}
                         ${authenticated ? `
                         <li class="nav-item">
                             <a class="nav-link ${activePage === 'invoice-view' ? 'active fw-semibold text-warning' : ''}" href="invoice-view.html">
@@ -456,27 +498,24 @@ export function renderNavbar(activePage = '') {
                                 <span class="fw-medium">${escapeHtml(user?.fullName || user?.email || 'Usuario')}</span>
                                 ${rolesBadges}
                             </div>
-                            <button type="button" class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#rtQuickAuthModal">
-                                <i class="bi bi-key me-1"></i>Cambiar Sesión
-                            </button>
+                            <a href="auth.html" class="btn btn-sm btn-outline-warning">
+                                <i class="bi bi-key me-1"></i>Cambiar Cuenta
+                            </a>
                             <button type="button" class="btn btn-sm btn-danger" id="rtLogoutBtn">
                                 <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
                             </button>
                         ` : `
-                            <a href="login.html" class="btn btn-sm btn-outline-light d-none d-sm-inline-block">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>Ir a Login
+                            <a href="auth.html" class="btn btn-sm btn-rt-primary">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión / Registrarse
                             </a>
-                            <button type="button" class="btn btn-sm btn-rt-primary" data-bs-toggle="modal" data-bs-target="#rtQuickAuthModal">
-                                <i class="bi bi-person-lock me-1"></i>Iniciar Sesión / JWT
-                            </button>
                         `}
                     </div>
                 </div>
             </div>
         </nav>
 
-        <!-- Modal de Inicio de Sesión / Token JWT Rápido -->
-        <div class="modal fade" id="rtQuickAuthModal" tabindex="-1" aria-labelledby="rtQuickAuthModalLabel" aria-hidden="true">
+        <!-- Modal de Inicio de Sesión / Token JWT Rápido (respaldo inline) -->
+        <div class="modal fade d-print-none" id="rtQuickAuthModal" tabindex="-1" aria-labelledby="rtQuickAuthModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header bg-dark text-white">
@@ -486,58 +525,24 @@ export function renderNavbar(activePage = '') {
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
                     <div class="modal-body">
-                        <ul class="nav nav-pills nav-fill mb-3" id="rtAuthTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="tab-credentials-btn" data-bs-toggle="pill"
-                                        data-bs-target="#tab-credentials" type="button" role="tab">
-                                    Email y Contraseña
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="tab-jwt-btn" data-bs-toggle="pill"
-                                        data-bs-target="#tab-jwt" type="button" role="tab">
-                                    Pegar Token JWT
-                                </button>
-                            </li>
-                        </ul>
-
-                        <div class="tab-content">
-                            <div class="tab-pane fade show active" id="tab-credentials" role="tabpanel">
-                                <form id="rtQuickLoginForm">
-                                    <div class="mb-3">
-                                        <label for="rtAuthEmail" class="form-label small fw-semibold">Correo electrónico</label>
-                                        <input type="email" class="form-control" id="rtAuthEmail" required placeholder="usuario@rentatools.pe">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="rtAuthPassword" class="form-label small fw-semibold">Contraseña</label>
-                                        <input type="password" class="form-control" id="rtAuthPassword" required placeholder="••••••••">
-                                    </div>
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-rt-primary">
-                                            <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
-                                        </button>
-                                    </div>
-                                </form>
+                        <form id="rtQuickLoginForm">
+                            <div class="mb-3">
+                                <label for="rtAuthEmail" class="form-label small fw-semibold">Correo electrónico</label>
+                                <input type="email" class="form-control" id="rtAuthEmail" required placeholder="usuario@rentatools.pe">
                             </div>
-
-                            <div class="tab-pane fade" id="tab-jwt" role="tabpanel">
-                                <form id="rtQuickJwtForm">
-                                    <div class="mb-3">
-                                        <label for="rtJwtInput" class="form-label small fw-semibold">Access Token (Bearer JWT)</label>
-                                        <textarea class="form-control font-monospace small" id="rtJwtInput" rows="4"
-                                                  placeholder="eyJhbGciOiJIUzI1NiJ9...">${escapeHtml(getAccessToken() || '')}</textarea>
-                                        <div class="form-text">
-                                            Los roles y el ID de usuario se extraen automáticamente del payload del JWT.
-                                        </div>
-                                    </div>
-                                    <div class="d-grid">
-                                        <button type="submit" class="btn btn-dark">
-                                            <i class="bi bi-check2-circle me-1"></i>Guardar Token en localStorage
-                                        </button>
-                                    </div>
-                                </form>
+                            <div class="mb-3">
+                                <label for="rtAuthPassword" class="form-label small fw-semibold">Contraseña</label>
+                                <input type="password" class="form-control" id="rtAuthPassword" required placeholder="••••••••">
                             </div>
-                        </div>
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-rt-primary">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
+                                </button>
+                                <a href="auth.html" class="btn btn-outline-dark btn-sm">
+                                    Ir a página completa de Login y Registro (auth.html)
+                                </a>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -564,27 +569,6 @@ export function renderNavbar(activePage = '') {
             }
         });
     }
-
-    const jwtForm = document.getElementById('rtQuickJwtForm');
-    if (jwtForm) {
-        jwtForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const rawToken = document.getElementById('rtJwtInput').value.trim().replace(/^Bearer\s+/i, '');
-            if (!rawToken) {
-                clearSession();
-                window.location.reload();
-                return;
-            }
-            saveSession({ accessToken: rawToken });
-            try {
-                const me = await apiFetch('/api/v1/users/me', { suppressErrorAlert: true });
-                if (me) saveSession({ accessToken: rawToken, user: me });
-            } catch {
-                // Si falla /me, se conserva la información extraída de los claims del JWT
-            }
-            window.location.reload();
-        });
-    }
 }
 
 const RentaToolsAuth = {
@@ -595,6 +579,8 @@ const RentaToolsAuth = {
     getCurrentUser,
     isAuthenticated,
     hasRole,
+    getLandingPageForUser,
+    redirectByRole,
     saveSession,
     clearSession,
     loginWithCredentials,

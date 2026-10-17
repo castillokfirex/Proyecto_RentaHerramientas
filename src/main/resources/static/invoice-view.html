@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Factura y Garantía | RentaTools</title>
+    <!-- Bootstrap 5.3 CSS & Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar Dinámica (Oculta al imprimir) -->
+    <header id="rt-navbar-host" class="d-print-none"></header>
+
+    <!-- Contenedor de Alertas ProblemDetail (RFC 9457) -->
+    <div id="rt-alert-container" class="d-print-none" aria-live="polite"></div>
+
+    <!-- Barra Superior de Búsqueda y Selección de Reserva / Factura (Oculta al imprimir) -->
+    <section class="bg-white border-bottom py-3 d-print-none">
+        <div class="container">
+            <div class="row align-items-center g-2">
+                <div class="col-lg-5">
+                    <div class="d-flex align-items-center gap-2">
+                        <label for="quickReservationSelect" class="small fw-semibold text-nowrap mb-0">
+                            <i class="bi bi-calendar2-check text-warning me-1"></i>Mis Reservas:
+                        </label>
+                        <select id="quickReservationSelect" class="form-select form-select-sm">
+                            <option value="">Selecciona una reserva con facturación...</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <form id="lookupBillingForm" class="input-group input-group-sm">
+                        <select id="lookupTypeSelect" class="form-select" style="max-width: 145px;">
+                            <option value="reservation">ID Reserva</option>
+                            <option value="invoice">ID Factura</option>
+                        </select>
+                        <input type="text" id="lookupIdInput" class="form-control font-monospace"
+                               placeholder="UUID de reserva o factura...">
+                        <button type="submit" class="btn btn-dark">
+                            <i class="bi bi-search me-1"></i>Consultar
+                        </button>
+                    </form>
+                </div>
+                <div class="col-lg-2 text-lg-end">
+                    <button type="button" id="printInvoiceBtn" class="btn btn-outline-dark btn-sm w-100">
+                        <i class="bi bi-printer me-1"></i>Imprimir / PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="container my-4 flex-grow-1">
+        <!-- Selector entre Factura de Alquiler (RENTAL) y Liquidación (SETTLEMENT) -->
+        <div id="invoiceSwitchBar" class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 d-none d-print-none">
+            <div class="btn-group btn-group-sm" role="group" aria-label="Tipo de comprobante">
+                <button type="button" id="btnShowRentalInvoice" class="btn btn-dark active">
+                    <i class="bi bi-file-earmark-text me-1"></i>Factura de Alquiler (RENTAL)
+                </button>
+                <button type="button" id="btnShowSettlementInvoice" class="btn btn-outline-dark">
+                    <i class="bi bi-file-earmark-Diff me-1"></i>Factura de Liquidación (SETTLEMENT)
+                </button>
+            </div>
+            <span id="reservationStatusQuickNote" class="small text-muted"></span>
+        </div>
+
+        <div class="row g-4">
+            <!-- HOJA IMPRIMIBLE DE LA FACTURA -->
+            <div class="col-lg-8">
+                <article id="invoicePrintableSheet" class="rt-invoice-sheet p-4">
+                    <!-- Estado vacío inicial -->
+                    <div id="invoiceEmptyState" class="text-center py-5">
+                        <i class="bi bi-receipt-cutoff display-4 text-muted mb-2"></i>
+                        <h2 class="h5 fw-bold">Selecciona una Reserva o Factura</h2>
+                        <p class="small text-muted mb-0">
+                            Elige una reserva del selector superior para visualizar el comprobante, desglose de alquiler, mora, daños e impuestos (IVA/IGV).
+                        </p>
+                    </div>
+
+                    <!-- Contenido de la Factura -->
+                    <div id="invoiceContentContainer" class="d-none">
+                        <!-- Cabecera del Comprobante -->
+                        <div class="d-flex flex-wrap justify-content-between align-items-start border-bottom pb-3 mb-4 gap-3">
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-1">
+                                    <span class="rt-brand-badge"><i class="bi bi-tools"></i> RT</span>
+                                    <span class="h5 fw-bold mb-0">RentaTools Facturación Electrónica</span>
+                                </div>
+                                <div class="small text-muted">Plataforma de Alquiler de Equipos y Maquinaria</div>
+                                <div class="small text-muted font-monospace mt-1">
+                                    Reserva ID: <span id="invReservationId">—</span>
+                                </div>
+                            </div>
+                            <div class="text-sm-end">
+                                <div class="d-flex align-items-center justify-content-sm-end gap-2 mb-1">
+                                    <span id="invTypeBadge" class="badge bg-dark">RENTAL</span>
+                                    <span id="invStatusBadge" class="badge bg-primary">ISSUED</span>
+                                </div>
+                                <div class="h5 fw-bold font-monospace mb-0" id="invSequenceNumber">N° —</div>
+                                <div class="small text-muted" id="invIssuedAt">Fecha emisión: —</div>
+                                <div class="small text-muted font-monospace" style="font-size: 0.72rem;" id="invUuidLabel"></div>
+                            </div>
+                        </div>
+
+                        <!-- Tabla de Conceptos (RENTAL, LATE_FEE, DAMAGE) -->
+                        <h3 class="h6 fw-bold text-uppercase text-muted small mb-2">
+                            Desglose de Conceptos Facturados
+                        </h3>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered align-middle small mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Concepto</th>
+                                        <th>Descripción</th>
+                                        <th>Unidad Reserva</th>
+                                        <th class="text-center">Cant.</th>
+                                        <th class="text-end">Valor Unitario</th>
+                                        <th class="text-end">Subtotal Línea</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoiceLinesTableBody"></tbody>
+                            </table>
+                        </div>
+
+                        <!-- Resumen de Impuestos (IVA/IGV) y Totales -->
+                        <div class="row justify-content-end mb-4">
+                            <div class="col-md-6">
+                                <div class="card bg-light border-0 p-3 small">
+                                    <div class="d-flex justify-content-between py-1">
+                                        <span class="text-muted">Subtotal Imponible:</span>
+                                        <strong id="invSubtotal">S/ 0.00</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1">
+                                        <span class="text-muted" id="invTaxLabel">IVA / IGV (18%):</span>
+                                        <strong id="invTax">S/ 0.00</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1 border-top mt-1 pt-2 fs-6">
+                                        <span class="fw-bold">Total Factura:</span>
+                                        <strong class="text-dark" id="invTotal">S/ 0.00</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1 text-success">
+                                        <span>Pagos Netos Registrados:</span>
+                                        <strong id="invNetPaid">S/ 0.00</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1 text-primary" id="invRetainedDepositRow">
+                                        <span>Cubierto con Retención de Garantía:</span>
+                                        <strong id="invRetainedDeposit">S/ 0.00</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between py-1 border-top mt-1 pt-2 fs-6">
+                                        <span class="fw-bold">Saldo Pendiente (`balance`):</span>
+                                        <strong id="invBalance" class="text-danger">S/ 0.00</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Historial de Pagos y Reembolsos de la Factura -->
+                        <h3 class="h6 fw-bold text-uppercase text-muted small mb-2">
+                            Historial de Pagos y Reembolsos
+                        </h3>
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle small mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Fecha / Hora</th>
+                                        <th>Tipo (`PaymentKind`)</th>
+                                        <th>Medio (`PaymentMethod`)</th>
+                                        <th>Referencia</th>
+                                        <th class="text-end">Monto</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="invoicePaymentsTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- PANEL LATERAL DE ACCIONES: PAGO SIMULADO, GARANTÍA Y LIQUIDACIÓN (Oculto al imprimir) -->
+            <aside class="col-lg-4 d-print-none">
+                <!-- 1. Procesar Pago Simulado sobre la Factura -->
+                <div class="card rt-card p-3 mb-3">
+                    <h3 class="h6 fw-bold mb-2">
+                        <i class="bi bi-credit-card-fill text-warning me-2"></i>Procesar Pago de Factura
+                    </h3>
+                    <p class="small text-muted mb-3">
+                        Registra un pago simulado (<code>SIMULATED</code>) o por otro medio sobre la factura activa.
+                    </p>
+                    <form id="payInvoiceForm">
+                        <div class="mb-2">
+                            <label for="payAmountInput" class="form-label small fw-semibold">Monto a Pagar</label>
+                            <input type="number" step="0.01" min="0.01" id="payAmountInput"
+                                   class="form-control form-control-sm" required placeholder="0.00">
+                        </div>
+                        <div class="mb-2">
+                            <label for="payMethodSelect" class="form-label small fw-semibold">Medio de Pago</label>
+                            <select id="payMethodSelect" class="form-select form-select-sm" required>
+                                <option value="SIMULATED" selected>SIMULATED (Pago Simulado Instantáneo)</option>
+                                <option value="CARD">CARD (Tarjeta)</option>
+                                <option value="TRANSFER">TRANSFER (Transferencia)</option>
+                                <option value="CASH">CASH (Efectivo)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="payReferenceInput" class="form-label small fw-semibold">Referencia de Operación</label>
+                            <input type="text" id="payReferenceInput" class="form-control form-control-sm font-monospace"
+                                   maxlength="100" value="SIM-PAY-ONLINE">
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" id="submitPayInvoiceBtn" class="btn btn-rt-primary btn-sm" disabled>
+                                <i class="bi bi-lightning-charge-fill me-1"></i>Procesar Pago Simulado (SIMULATED)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 2. Estado y Cobro del Depósito de Garantía (SecurityDeposit) -->
+                <div id="securityDepositCard" class="card rt-card p-3 mb-3 d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h3 class="h6 fw-bold mb-0">
+                            <i class="bi bi-shield-check text-warning me-2"></i>Depósito de Garantía
+                        </h3>
+                        <span id="depositStatusBadge" class="badge bg-secondary">PENDIENTE</span>
+                    </div>
+                    <div id="depositSummaryBody" class="small mb-3"></div>
+
+                    <form id="collectDepositForm">
+                        <div class="input-group input-group-sm mb-2">
+                            <span class="input-group-text">Monto</span>
+                            <input type="number" step="0.01" min="0.01" id="depositAmountInput"
+                                   class="form-control" required>
+                            <button type="submit" id="collectDepositBtn" class="btn btn-success fw-semibold">
+                                <i class="bi bi-shield-plus me-1"></i>Cobrar Garantía (SIMULATED)
+                            </button>
+                        </div>
+                        <div class="form-text small">
+                            Al quedar pagada la factura RENTAL y cubierta la garantía, la reserva pasa automáticamente a <code>READY_FOR_PICKUP</code>.
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 3. Panel de Liquidación y Cargos por Daño (Para PROVEEDOR / ADMIN) -->
+                <div id="providerSettlementCard" class="card rt-card p-3 d-none">
+                    <h3 class="h6 fw-bold mb-2">
+                        <i class="bi bi-tools text-warning me-2"></i>Liquidación Final (PROVEEDOR / ADMIN)
+                    </h3>
+                    <form id="addDamageChargeForm" class="border-bottom pb-3 mb-3">
+                        <div class="small fw-semibold mb-2">Agregar Cargo por Daño al Borrador SETTLEMENT</div>
+                        <div class="mb-2">
+                            <input type="text" id="damageUnitIdInput" class="form-control form-control-sm font-monospace"
+                                   required placeholder="UUID de reservation_unit_id">
+                        </div>
+                        <div class="mb-2">
+                            <input type="text" id="damageDescriptionInput" class="form-control form-control-sm"
+                                   required maxlength="255" placeholder="Descripción del daño verificado">
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <input type="number" step="0.01" min="0.01" id="damageAmountInput"
+                                   class="form-control" required placeholder="Importe PEN">
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="bi bi-plus-circle me-1"></i>Agregar Daño
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="d-grid">
+                        <button type="button" id="settleReservationBtn" class="btn btn-dark btn-sm">
+                            <i class="bi bi-check2-all me-1"></i>Liquidar Reserva y Devolver Excedente de Garantía
+                        </button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer (Oculto al imprimir) -->
+    <footer class="bg-white border-top py-3 mt-auto d-print-none">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center small text-muted">
+            <span><strong>RentaTools</strong> · Facturación, Pagos y Depósitos en Garantía</span>
+            <span>Módulo BILLING</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/invoice-view.js"></script>
+</body>
+</html>
