@@ -1,0 +1,44 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:${DB_URL:jdbc:mysql://localhost:3306/rentatools?useUnicode=true&characterEncoding=utf8&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true}}
+    username: ${SPRING_DATASOURCE_USERNAME:${DB_USERNAME:rentatools}}
+    password: ${SPRING_DATASOURCE_PASSWORD:${DB_PASSWORD:rentatools}}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+app:
+  jwt:
+    issuer: rentatools
+    secret: ${JWT_SECRET:production-strong-jwt-secret-key-at-least-32-bytes-long-hs256}
+    access-token-ttl: 15m
+    refresh-token-ttl: 7d
+  storage:
+    location: ${STORAGE_LOCATION:/var/rentatools/uploads}
+  bootstrap:
+    admin-email: ${ADMIN_EMAIL:admin@rentatools.com}
+    admin-password: ${ADMIN_PASSWORD:Admin1234!}
+
+server:
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+
+logging:
+  level:
+    root: INFO
+    com.rentatools: INFO
+    org.springframework.security: WARN

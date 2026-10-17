@@ -24,5 +24,26 @@ services:
       timeout: 5s
       retries: 10
 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: rentatools-app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/rentatools?useUnicode=true&characterEncoding=utf8&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true
+      SPRING_DATASOURCE_USERNAME: rentatools
+      SPRING_DATASOURCE_PASSWORD: rentatools
+      JWT_SECRET: production-strong-jwt-secret-key-at-least-32-bytes-long-hs256
+      ADMIN_EMAIL: admin@rentatools.com
+      ADMIN_PASSWORD: Admin1234!
+      TZ: UTC
+    ports:
+      - "8080:8080"
+
 volumes:
   mysql_data:
