@@ -79,6 +79,11 @@ class BillingInfrastructureAdaptersTest {
             }
 
             @Override
+            public List<Invoice> findAll() {
+                return baseRepo.findAll();
+            }
+
+            @Override
             public void delete(InvoiceId id) {
                 baseRepo.delete(id);
             }
@@ -140,5 +145,83 @@ class BillingInfrastructureAdaptersTest {
         );
         assertThat(settings.taxRate()).isEqualByComparingTo("0.1900");
         assertThat(settings.lateFeeMultiplier()).isEqualByComparingTo("1.50");
+    }
+
+    @Test
+    @DisplayName("RentalEventsListener traduce ReservationConfirmed, ReservationReturned y ReservationCancelled a los casos de uso")
+    void rentalEventsListenerDelegatesToBillingUseCases() {
+        var openRentalUseCase = Mockito.mock(com.rentatools.billing.application.port.in.OpenRentalBillingUseCase.class);
+        var cancelBillingUseCase = Mockito.mock(com.rentatools.billing.application.port.in.CancelReservationBillingUseCase.class);
+        var openSettlementUseCase = Mockito.mock(com.rentatools.billing.application.port.in.OpenSettlementUseCase.class);
+
+        var listener = new com.rentatools.billing.infrastructure.adapter.in.event.RentalEventsListener(
+                openRentalUseCase,
+                cancelBillingUseCase,
+                openSettlementUseCase
+        );
+
+        UUID reservationId = Ids.newId();
+        UUID unitId = Ids.newId();
+        UUID clientId = Ids.newId();
+        UUID providerId = Ids.newId();
+        Instant now = Instant.parse("2026-06-01T10:00:00Z");
+
+        listener.onReservationConfirmed(new com.rentatools.shared.integration.rental.ReservationConfirmed(
+                Ids.newId(),
+                now,
+                reservationId,
+                "RES-10",
+                clientId,
+                providerId,
+                java.time.LocalDate.of(2026, 6, 10),
+                java.time.LocalDate.of(2026, 6, 12),
+                providerId,
+                List.of(new com.rentatools.shared.integration.rental.ReservationConfirmed.Line(
+                        unitId,
+                        "Taladro",
+                        "SN-10",
+                        new BigDecimal("100000.00"),
+                        new BigDecimal("50000.00")
+                ))
+        ));
+        Mockito.verify(openRentalUseCase).openRentalBilling(Mockito.argThat(cmd ->
+                cmd.reservationId().equals(reservationId)
+                        && cmd.units().size() == 1
+                        && cmd.units().getFirst().agreedAmount().equals(Money.of("100000.00"))
+        ));
+
+        listener.onReservationReturned(new com.rentatools.shared.integration.rental.ReservationReturned(
+                Ids.newId(),
+                now,
+                reservationId,
+                providerId,
+                List.of(new com.rentatools.shared.integration.rental.ReservationReturned.ReturnedUnit(
+                        unitId,
+                        "Taladro",
+                        java.time.LocalDate.of(2026, 6, 14),
+                        2,
+                        new BigDecimal("25000.00"),
+                        true,
+                        false
+                ))
+        ));
+        Mockito.verify(openSettlementUseCase).openSettlement(Mockito.argThat(cmd ->
+                cmd.reservationId().equals(reservationId)
+                        && cmd.units().size() == 1
+                        && cmd.units().getFirst().lateDays() == 2
+        ));
+
+        listener.onReservationCancelled(new com.rentatools.shared.integration.rental.ReservationCancelled(
+                Ids.newId(),
+                now,
+                reservationId,
+                "CONFIRMED",
+                clientId,
+                "Cambio de planes"
+        ));
+        Mockito.verify(cancelBillingUseCase).cancelReservationBilling(Mockito.argThat(cmd ->
+                cmd.reservationId().equals(reservationId)
+                        && cmd.cancelledBy().equals(clientId)
+        ));
     }
 }

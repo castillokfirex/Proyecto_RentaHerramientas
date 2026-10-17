@@ -64,6 +64,14 @@ public class InvoicePersistenceAdapter implements InvoiceRepository {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Invoice> findAll() {
+        return springDataInvoiceRepository.findAll().stream()
+                .map(mapper::toDomain)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public void delete(InvoiceId id) {
         springDataInvoiceRepository.deleteById(id.value());

@@ -74,4 +74,16 @@ public class SecurityDepositPersistenceAdapter implements SecurityDepositReposit
                     return mapper.toDomain(entity, retentions);
                 });
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SecurityDeposit> findAll() {
+        return springDataSecurityDepositRepository.findAll().stream()
+                .map(entity -> {
+                    List<DepositRetentionJpaEntity> retentions =
+                            springDataDepositRetentionRepository.findByReservationId(entity.getReservationId());
+                    return mapper.toDomain(entity, retentions);
+                })
+                .toList();
+    }
 }

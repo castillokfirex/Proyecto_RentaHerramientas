@@ -69,6 +69,11 @@ public final class BillingTestFakes {
         }
 
         @Override
+        public List<Invoice> findAll() {
+            return List.copyOf(store.values());
+        }
+
+        @Override
         public void delete(InvoiceId id) {
             store.remove(id);
         }
@@ -104,6 +109,11 @@ public final class BillingTestFakes {
             return store.values().stream()
                     .filter(d -> d.reservationId().equals(reservationId))
                     .findFirst();
+        }
+
+        @Override
+        public List<SecurityDeposit> findAll() {
+            return List.copyOf(store.values());
         }
     }
 

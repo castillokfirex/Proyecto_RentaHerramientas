@@ -396,4 +396,52 @@ class BillingUseCasesTest {
                 .extracting("code")
                 .isEqualTo("CLIENT_PAYMENT_METHOD_FORBIDDEN");
     }
+
+    @Test
+    @DisplayName("GetRevenueReportQuery consolida total facturado, cobrado, garantías y desglose por medio de pago solo para ADMIN")
+    void generatesFinancialRevenueReportForAdminOnly() {
+        Actor adminActor = new Actor(Ids.newId(), Set.of(ActorRole.ADMIN));
+
+        ReservationBillingView billing = rentalBillingService.openRentalBilling(
+                new OpenRentalBillingUseCase.Command(
+                        reservationId,
+                        List.of(new UnitRentalCharge(unit1Id, "Taladro", "SN-01", Money.of("100000"), Money.of("200000")))
+                )
+        );
+        paymentService.registerPayment(new RegisterPaymentUseCase.Command(
+                clientActor,
+                billing.rentalInvoice().id(),
+                Money.of("119000.00"),
+                PaymentMethod.SIMULATED,
+                "PAY-SIM"
+        ));
+        depositService.collectDeposit(new CollectDepositUseCase.Command(
+                clientActor,
+                reservationId,
+                Money.of("200000.00"),
+                PaymentMethod.SIMULATED,
+                "DEP-SIM"
+        ));
+
+        InvoiceView draftSettlement = settlementService.openSettlement(new OpenSettlementUseCase.Command(
+                reservationId,
+                List.of(new ReturnedUnitCharge(unit1Id, "Taladro", 1, Money.of("20000")))
+        ));
+        // 1 día mora a 20,000 * 1.50 = 30,000 + IVA 19% (5,700) = 35,700.00
+        settlementService.settleReservation(new SettleReservationUseCase.Command(providerActor, reservationId));
+
+        assertThatThrownBy(() -> billingQueryService.getRevenueReport(clientActor))
+                .isInstanceOf(ForbiddenException.class);
+        assertThatThrownBy(() -> billingQueryService.getRevenueReport(providerActor))
+                .isInstanceOf(ForbiddenException.class);
+
+        var report = billingQueryService.getRevenueReport(adminActor);
+        // Facturado: RENTAL (119,000.00) + SETTLEMENT (35,700.00) = 154,700.00
+        assertThat(report.totalInvoiced()).isEqualByComparingTo("154700.00");
+        assertThat(report.totalCollected()).isEqualByComparingTo("119000.00");
+        assertThat(report.depositsRetained()).isEqualByComparingTo("35700.00");
+        assertThat(report.depositsRefunded()).isEqualByComparingTo("164300.00");
+        assertThat(report.breakdownByPaymentMethod().get(PaymentMethod.SIMULATED)).isEqualByComparingTo("119000.00");
+        assertThat(report.breakdownByPaymentMethod().get(PaymentMethod.CASH)).isEqualByComparingTo("0.00");
+    }
 }

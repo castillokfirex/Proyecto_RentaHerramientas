@@ -3,6 +3,7 @@ package com.rentatools.billing.application.port.out;
 import com.rentatools.billing.domain.model.deposit.DepositId;
 import com.rentatools.billing.domain.model.deposit.SecurityDeposit;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,4 +17,6 @@ public interface SecurityDepositRepository {
     Optional<SecurityDeposit> findById(DepositId id);
 
     Optional<SecurityDeposit> findByReservationId(UUID reservationId);
+
+    List<SecurityDeposit> findAll();
 }

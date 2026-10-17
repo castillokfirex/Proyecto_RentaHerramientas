@@ -21,5 +21,7 @@ public interface InvoiceRepository {
 
     List<Invoice> findByReservationId(UUID reservationId);
 
+    List<Invoice> findAll();
+
     void delete(InvoiceId id);
 }
