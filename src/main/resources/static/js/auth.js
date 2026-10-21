@@ -444,13 +444,13 @@ export function renderNavbar(activePage = '') {
         : '';
 
     navHost.innerHTML = `
-        <nav class="navbar navbar-expand-lg navbar-dark rt-navbar sticky-top d-print-none">
+        <nav class="navbar navbar-expand-lg navbar-dark rt-navbar d-print-none">
             <div class="container">
                 <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="catalog.html">
                     <span class="rt-brand-badge"><i class="bi bi-tools"></i> RT</span>
-                    <span>RentaTools</span>
+                    <span class="fw-bold tracking-tight">RentaTools</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#rtNavbarContent"
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#rtNavbarContent"
                         aria-controls="rtNavbarContent" aria-expanded="false" aria-label="Alternar navegación">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -461,21 +461,21 @@ export function renderNavbar(activePage = '') {
                                 <i class="bi bi-grid-3x3-gap me-1"></i>Catálogo
                             </a>
                         </li>
-                        ${(!authenticated || isClient || isAdmin) ? `
+                        ${(authenticated && (isClient || isAdmin)) ? `
                         <li class="nav-item">
                             <a class="nav-link ${activePage === 'client-reservations' ? 'active fw-semibold text-warning' : ''}" href="client-reservations.html">
                                 <i class="bi bi-calendar2-check me-1"></i>Mis Reservas
                             </a>
                         </li>
                         ` : ''}
-                        ${(!authenticated || isProvider || isAdmin) ? `
+                        ${(authenticated && (isProvider || isAdmin)) ? `
                         <li class="nav-item">
                             <a class="nav-link ${activePage === 'provider-dashboard' ? 'active fw-semibold text-warning' : ''}" href="provider-dashboard.html">
                                 <i class="bi bi-briefcase me-1"></i>Panel Proveedor
                             </a>
                         </li>
                         ` : ''}
-                        ${(!authenticated || isAdmin) ? `
+                        ${(authenticated && isAdmin) ? `
                         <li class="nav-item">
                             <a class="nav-link ${activePage === 'admin-dashboard' ? 'active fw-semibold text-warning' : ''}" href="admin-dashboard.html">
                                 <i class="bi bi-shield-check me-1"></i>Administración
@@ -513,33 +513,57 @@ export function renderNavbar(activePage = '') {
                 </div>
             </div>
         </nav>
+    `;
 
-        <!-- Modal de Inicio de Sesión / Token JWT Rápido (respaldo inline) -->
-        <div class="modal fade d-print-none" id="rtQuickAuthModal" tabindex="-1" aria-labelledby="rtQuickAuthModalLabel" aria-hidden="true">
+    const logoutBtn = document.getElementById('rtLogoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => logout());
+    }
+
+    // Modal de Login Rápido montado directamente en document.body para evitar conflictos de stacking context
+    let quickModalEl = document.getElementById('rtQuickAuthModal');
+    if (!quickModalEl) {
+        const modalContainer = document.createElement('div');
+        modalContainer.innerHTML = `
+        <div class="modal fade d-print-none" id="rtQuickAuthModal" tabindex="-1" aria-labelledby="rtQuickAuthModalLabel" aria-hidden="true" style="z-index: 1060;">
             <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
+                <div class="modal-content border-0 shadow-lg" style="border-radius: var(--rt-radius-lg, 1rem); overflow: hidden;">
                     <div class="modal-header bg-dark text-white">
-                        <h5 class="modal-title" id="rtQuickAuthModalLabel">
-                            <i class="bi bi-shield-lock text-warning me-2"></i>Autenticación RentaTools
+                        <h5 class="modal-title fw-bold" id="rtQuickAuthModalLabel">
+                            <i class="bi bi-shield-lock text-warning me-2"></i>Iniciar Sesión
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body p-4">
+                        <div class="bg-light p-3 rounded-3 mb-3 border">
+                            <div class="small fw-bold text-muted mb-2">
+                                <i class="bi bi-lightning-charge-fill text-warning me-1"></i>Acceso rápido de prueba (1 clic):
+                            </div>
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-dark demo-fill-client-quick">
+                                    <i class="bi bi-person me-1 text-warning"></i>Demo CLIENTE
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-dark demo-fill-provider-quick">
+                                    <i class="bi bi-briefcase me-1 text-warning"></i>Demo PROVEEDOR
+                                </button>
+                            </div>
+                        </div>
+
                         <form id="rtQuickLoginForm">
                             <div class="mb-3">
-                                <label for="rtAuthEmail" class="form-label small fw-semibold">Correo electrónico</label>
-                                <input type="email" class="form-control" id="rtAuthEmail" required placeholder="usuario@rentatools.pe">
+                                <label for="rtAuthEmail" class="form-label small fw-semibold">Correo Electrónico</label>
+                                <input type="email" class="form-control" id="rtAuthEmail" required placeholder="correo@rentatools.com">
                             </div>
                             <div class="mb-3">
                                 <label for="rtAuthPassword" class="form-label small fw-semibold">Contraseña</label>
                                 <input type="password" class="form-control" id="rtAuthPassword" required placeholder="••••••••">
                             </div>
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-rt-primary">
-                                    <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
+                                <button type="submit" id="rtQuickSubmitBtn" class="btn btn-rt-primary py-2">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>Ingresar y Continuar
                                 </button>
-                                <a href="auth.html" class="btn btn-outline-dark btn-sm">
-                                    Ir a página completa de Login y Registro (auth.html)
+                                <a href="auth.html" class="btn btn-outline-secondary btn-sm text-center">
+                                    ¿No tienes cuenta? Regístrate aquí (auth.html)
                                 </a>
                             </div>
                         </form>
@@ -547,12 +571,28 @@ export function renderNavbar(activePage = '') {
                 </div>
             </div>
         </div>
-    `;
-
-    const logoutBtn = document.getElementById('rtLogoutBtn');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => logout());
+        `;
+        document.body.appendChild(modalContainer.firstElementChild);
     }
+
+    // Botones de autocompletado demo para pruebas rápidas
+    document.querySelectorAll('.demo-fill-client-quick').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const emailInput = document.getElementById('rtAuthEmail');
+            const passInput = document.getElementById('rtAuthPassword');
+            if (emailInput) emailInput.value = 'cliente.dev@rentatools.com';
+            if (passInput) passInput.value = 'Password123!';
+        });
+    });
+
+    document.querySelectorAll('.demo-fill-provider-quick').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const emailInput = document.getElementById('rtAuthEmail');
+            const passInput = document.getElementById('rtAuthPassword');
+            if (emailInput) emailInput.value = 'proveedor1.dev@rentatools.com';
+            if (passInput) passInput.value = 'Password123!';
+        });
+    });
 
     const loginForm = document.getElementById('rtQuickLoginForm');
     if (loginForm) {
@@ -568,6 +608,31 @@ export function renderNavbar(activePage = '') {
                 // El error ProblemDetail ya es mostrado por apiFetch
             }
         });
+    }
+
+    // Botón flotante para volver arriba sin saltos ni espacios en blanco
+    let backToTop = document.getElementById('rtBackToTopBtn');
+    if (!backToTop) {
+        backToTop = document.createElement('button');
+        backToTop.id = 'rtBackToTopBtn';
+        backToTop.type = 'button';
+        backToTop.className = 'btn btn-rt-primary rt-back-to-top shadow d-none';
+        backToTop.title = 'Volver arriba';
+        backToTop.setAttribute('aria-label', 'Volver al inicio de la página');
+        backToTop.innerHTML = '<i class="bi bi-chevron-up text-dark fw-bold"></i>';
+        document.body.appendChild(backToTop);
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 280) {
+                backToTop.classList.remove('d-none');
+            } else {
+                backToTop.classList.add('d-none');
+            }
+        }, { passive: true });
     }
 }
 
