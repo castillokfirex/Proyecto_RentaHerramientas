@@ -3,213 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso y Registro | RentaTools</title>
+    <title>Iniciar Sesión | RentaTools</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Bootstrap 5.3 CSS & Icons CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
 </head>
-<body>
-    <!-- Navbar Dinámica -->
-    <header id="rt-navbar-host"></header>
+<body class="rt-auth-body">
+    <!-- Navbar host invisible para compatibilidad con auth.js renderNavbar -->
+    <header id="rt-navbar-host" class="d-none"></header>
 
-    <!-- Contenedor de Alertas ProblemDetail (RFC 9457) -->
-    <div id="rt-alert-container" aria-live="polite"></div>
-
-    <main class="container my-5 flex-grow-1">
-        <div class="row justify-content-center">
-            <div class="col-lg-6 col-md-8">
-                <!-- Banner de sesión expirada (401) -->
-                <div id="expiredSessionBanner" class="alert alert-warning d-none mb-3 small">
-                    <i class="bi bi-exclamation-circle-fill me-1"></i>
-                    Tu sesión ha expirado o la operación requiere iniciar sesión. Por favor autentícate nuevamente.
+    <div class="rt-auth-page-container">
+        <div class="rt-auth-split-wrapper">
+            
+            <!-- PANEL IZQUIERDO: Identidad de RentaTools & Propuesta de Valor -->
+            <section class="rt-auth-brand-side" aria-label="Identidad RentaTools">
+                <div class="rt-auth-brand-header">
+                    <a href="catalog.html" class="rt-auth-brand-logo" title="Ir al Catálogo de RentaTools">
+                        <img src="images/logo.png" alt="RentaTools - Renta de Herramientas">
+                    </a>
                 </div>
 
-                <div class="card rt-card overflow-hidden">
-                    <div class="rt-hero p-4 text-center">
-                        <span class="rt-brand-badge d-inline-block mb-2"><i class="bi bi-tools"></i> RentaTools</span>
-                        <h1 class="h4 fw-bold mb-1">Portal de Identidad y Acceso (IAM)</h1>
-                        <p class="text-white-50 small mb-0">
-                            Inicia sesión con tu cuenta o regístrate como Cliente o Proveedor de equipos.
-                        </p>
+                <div class="rt-auth-brand-center">
+                    <div class="rt-auth-pretitle">
+                        <i class="bi bi-gear-fill text-warning"></i>
+                        <span>Tu proyecto, nuestra herramienta</span>
                     </div>
 
-                    <div class="card-body p-4">
-                        <!-- Pestañas: Login | Registro de Cliente | Registro de Proveedor -->
-                        <ul class="nav nav-pills nav-fill mb-4" id="authTabs" role="tablist">
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link active fw-semibold small" id="login-tab" data-bs-toggle="pill"
-                                        data-bs-target="#pane-login" type="button" role="tab">
-                                    <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link fw-semibold small" id="register-client-tab" data-bs-toggle="pill"
-                                        data-bs-target="#pane-register-client" type="button" role="tab">
-                                    <i class="bi bi-person-plus me-1"></i>Registro Cliente
-                                </button>
-                            </li>
-                            <li class="nav-item" role="presentation">
-                                <button class="nav-link fw-semibold small" id="register-provider-tab" data-bs-toggle="pill"
-                                        data-bs-target="#pane-register-provider" type="button" role="tab">
-                                    <i class="bi bi-building-add me-1"></i>Registro Proveedor
-                                </button>
-                            </li>
-                        </ul>
+                    <h1 class="rt-auth-main-title">
+                        Alquila, construye,<br>
+                        <span class="rt-title-orange">avanza.</span>
+                    </h1>
 
-                        <div class="tab-content" id="authTabContent">
-                            <!-- PESTAÑA 1: LOGIN -->
-                            <div class="tab-pane fade show active" id="pane-login" role="tabpanel">
-                                <form id="loginForm">
-                                    <div class="mb-3">
-                                        <label for="loginEmail" class="form-label small fw-semibold">Correo Electrónico</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
-                                            <input type="email" id="loginEmail" class="form-control" required
-                                                   placeholder="correo@rentatools.com">
-                                        </div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="loginPassword" class="form-label small fw-semibold">Contraseña</label>
-                                        <div class="input-group">
-                                            <span class="input-group-text bg-light"><i class="bi bi-lock"></i></span>
-                                            <input type="password" id="loginPassword" class="form-control" required
-                                                   minlength="8" placeholder="••••••••">
-                                        </div>
-                                    </div>
-                                    <div class="d-grid mb-3">
-                                        <button type="submit" id="loginSubmitBtn" class="btn btn-rt-primary py-2">
-                                            <i class="bi bi-box-arrow-in-right me-1"></i>Ingresar a RentaTools
-                                        </button>
-                                    </div>
-                                </form>
+                    <p class="rt-auth-brand-desc">
+                        En RentaTools conectamos a profesionales y empresas con equipos de alta calidad para que tus proyectos lleguen más lejos.
+                    </p>
 
-                                <!-- Accesos rápidos con cuentas semilla para demostración -->
-                                <div class="border-top pt-3 mt-3">
-                                    <div class="small text-muted fw-semibold mb-2">
-                                        <i class="bi bi-lightning-charge text-warning me-1"></i>Cuentas de Demostración (Seed Data):
-                                    </div>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <button type="button" class="btn btn-sm btn-outline-dark demo-fill-btn"
-                                                data-email="cliente.dev@rentatools.com" data-pass="Password123!">
-                                            <i class="bi bi-person me-1"></i>Demo CLIENTE
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-dark demo-fill-btn"
-                                                data-email="proveedor1.dev@rentatools.com" data-pass="Password123!">
-                                            <i class="bi bi-briefcase me-1"></i>Demo PROVEEDOR
-                                        </button>
-                                        <button type="button" class="btn btn-sm btn-outline-dark demo-fill-btn"
-                                                data-email="admin.dev@rentatools.com" data-pass="Password123!">
-                                            <i class="bi bi-shield-lock me-1"></i>Demo ADMIN
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- PESTAÑA 2: REGISTRO DE CLIENTE -->
-                            <div class="tab-pane fade" id="pane-register-client" role="tabpanel">
-                                <form id="registerClientForm">
-                                    <div class="mb-3">
-                                        <label for="clientFullName" class="form-label small fw-semibold">Nombre Completo *</label>
-                                        <input type="text" id="clientFullName" class="form-control" required maxlength="150"
-                                               placeholder="Ej. Ana María Torres">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="clientEmail" class="form-label small fw-semibold">Correo Electrónico *</label>
-                                        <input type="email" id="clientEmail" class="form-control" required maxlength="254"
-                                               placeholder="cliente@ejemplo.com">
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-sm-6">
-                                            <label for="clientPassword" class="form-label small fw-semibold">Contraseña (mín. 8) *</label>
-                                            <input type="password" id="clientPassword" class="form-control" required
-                                                   minlength="8" maxlength="72" placeholder="••••••••">
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label for="clientPhone" class="form-label small fw-semibold">Teléfono</label>
-                                            <input type="tel" id="clientPhone" class="form-control" maxlength="20"
-                                                   placeholder="+573001112233">
-                                        </div>
-                                    </div>
-                                    <div class="d-grid">
-                                        <button type="submit" id="registerClientBtn" class="btn btn-rt-primary py-2">
-                                            <i class="bi bi-person-check me-1"></i>Crear Cuenta de Cliente
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-
-                            <!-- PESTAÑA 3: REGISTRO DE PROVEEDOR -->
-                            <div class="tab-pane fade" id="pane-register-provider" role="tabpanel">
-                                <div class="alert alert-info py-2 px-3 small mb-3">
-                                    <i class="bi bi-info-circle me-1"></i>
-                                    Los proveedores registrados requieren aprobación de un administrador (`ADMIN`) antes de poder publicar herramientas en el catálogo activo.
-                                </div>
-                                <form id="registerProviderForm">
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-sm-6">
-                                            <label for="provFullName" class="form-label small fw-semibold">Nombre del Representante *</label>
-                                            <input type="text" id="provFullName" class="form-control" required maxlength="150"
-                                                   placeholder="Ej. Carlos Gómez">
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label for="provPhone" class="form-label small fw-semibold">Teléfono de Contacto</label>
-                                            <input type="tel" id="provPhone" class="form-control" maxlength="20"
-                                                   placeholder="+573009998877">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-sm-7">
-                                            <label for="provBusinessName" class="form-label small fw-semibold">Razón Social / Empresa (businessName) *</label>
-                                            <input type="text" id="provBusinessName" class="form-control" required maxlength="150"
-                                                   placeholder="Ej. Maquinaria Industrial del Norte SAS">
-                                        </div>
-                                        <div class="col-sm-5">
-                                            <label for="provTaxId" class="form-label small fw-semibold">NIT / RUC (taxId) *</label>
-                                            <input type="text" id="provTaxId" class="form-control font-monospace" required
-                                                   minlength="5" maxlength="20" placeholder="900123456-7">
-                                        </div>
-                                    </div>
-                                    <div class="row g-3 mb-3">
-                                        <div class="col-sm-6">
-                                            <label for="provEmail" class="form-label small fw-semibold">Correo Corporativo *</label>
-                                            <input type="email" id="provEmail" class="form-control" required maxlength="254"
-                                                   placeholder="contacto@empresa.com">
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label for="provPassword" class="form-label small fw-semibold">Contraseña (mín. 8) *</label>
-                                            <input type="password" id="provPassword" class="form-control" required
-                                                   minlength="8" maxlength="72" placeholder="••••••••">
-                                        </div>
-                                    </div>
-                                    <div class="d-grid">
-                                        <button type="submit" id="registerProviderBtn" class="btn btn-dark py-2">
-                                            <i class="bi bi-building-check me-1"></i>Registrar Perfil de Proveedor
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                    <!-- Tres elementos con iconos industriales -->
+                    <div class="rt-auth-features-row">
+                        <div class="rt-auth-feature-box">
+                            <i class="bi bi-shield-check rt-auth-feature-icon"></i>
+                            <div class="rt-auth-feature-heading">Equipos certificados</div>
+                            <p class="rt-auth-feature-subtext">Calidad garantizada</p>
+                        </div>
+                        <div class="rt-auth-feature-box">
+                            <i class="bi bi-truck rt-auth-feature-icon"></i>
+                            <div class="rt-auth-feature-heading">Entrega y recolección</div>
+                            <p class="rt-auth-feature-subtext">Según disponibilidad</p>
+                        </div>
+                        <div class="rt-auth-feature-box">
+                            <i class="bi bi-headset rt-auth-feature-icon"></i>
+                            <div class="rt-auth-feature-heading">Soporte 24/7</div>
+                            <p class="rt-auth-feature-subtext">Siempre contigo</p>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </main>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white-50 border-top border-secondary border-opacity-25 py-4 mt-auto">
-        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3 small">
-            <div class="d-flex align-items-center gap-2">
-                <span class="rt-brand-badge py-1 px-2"><i class="bi bi-tools"></i> RT</span>
-                <span class="text-white fw-semibold">RentaTools</span>
-                <span class="text-secondary">· Identidad y Control de Acceso (IAM)</span>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-                <span class="badge bg-secondary-subtle text-secondary border border-secondary border-opacity-25">Autenticación Stateless JWT</span>
-                <span>&copy; 2026 RentaTools Inc.</span>
+                <div class="rt-auth-brand-footer">
+                    <div class="rt-auth-quote-badge">
+                        <i class="bi bi-cone-striped"></i>
+                        <span>Más que herramientas, <strong class="text-warning">soluciones para tu trabajo.</strong></span>
+                    </div>
+
+                    <a href="catalog.html" class="rt-auth-back-home">
+                        <i class="bi bi-arrow-left"></i>
+                        <span>Explorar catálogo</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- PANEL DERECHO: Formulario de Autenticación Premium -->
+            <section class="rt-auth-form-side" aria-label="Formulario de inicio de sesión">
+                
+                <!-- Banner de sesión expirada (401) -->
+                <div id="expiredSessionBanner" class="alert alert-warning alert-dismissible fade show d-none mb-3 small w-100" style="max-width: 470px;" role="alert">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-exclamation-circle-fill fs-5"></i>
+                        <div>Tu sesión ha expirado o la operación requiere iniciar sesión. Por favor autentícate nuevamente.</div>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+
+                <!-- Contenedor de Alertas ProblemDetail (RFC 9457) -->
+                <div id="rt-alert-container" aria-live="polite" class="w-100" style="max-width: 470px;"></div>
+
+                <div class="rt-auth-card-modern">
+                    
+                    <!-- VISTA 1: INICIO DE SESIÓN (LOGIN PRINCIPAL) -->
+                    <div id="authViewLogin">
+                        <div class="rt-auth-card-header">
+                            <div class="rt-auth-card-logo">
+                                <img src="images/logo.png" alt="RentaTools">
+                            </div>
+                            <h2 class="rt-auth-card-title">¡Bienvenido de nuevo!</h2>
+                            <p class="rt-auth-card-subtitle">
+                                Inicia sesión para acceder a tu cuenta y continuar con tus reservas.
+                            </p>
+                        </div>
+
+                        <!-- Selector visual entre Cliente y Proveedor -->
+                        <div class="rt-auth-role-tabs" role="tablist" aria-label="Tipo de perfil">
+                            <button type="button" class="rt-auth-role-tab active" id="roleTabClient" data-role="CLIENTE" role="tab" aria-selected="true">
+                                <i class="bi bi-person"></i>
+                                <span>Cliente</span>
+                            </button>
+                            <button type="button" class="rt-auth-role-tab" id="roleTabProvider" data-role="PROVEEDOR" role="tab" aria-selected="false">
+                                <i class="bi bi-briefcase"></i>
+                                <span>Proveedor</span>
+                            </button>
+                        </div>
+
+                        <!-- Formulario de Login -->
+                        <form id="loginForm" novalidate>
+                            <div class="rt-auth-field">
+                                <label for="loginEmail" class="rt-auth-field-label">Correo electrónico</label>
+                                <div class="rt-auth-input-container">
+                                    <i class="bi bi-envelope rt-auth-input-icon"></i>
+                                    <input type="email" id="loginEmail" class="rt-auth-text-input" required
+                                           placeholder="correo@rentatools.com" autocomplete="email">
+                                </div>
+                            </div>
+
+                            <div class="rt-auth-field">
+                                <label for="loginPassword" class="rt-auth-field-label">Contraseña</label>
+                                <div class="rt-auth-input-container">
+                                    <i class="bi bi-lock rt-auth-input-icon"></i>
+                                    <input type="password" id="loginPassword" class="rt-auth-text-input" required
+                                           minlength="8" placeholder="Ingresa tu contraseña" autocomplete="current-password">
+                                    <button type="button" class="rt-auth-eye-btn" id="togglePasswordBtn"
+                                            title="Mostrar u ocultar contraseña" aria-label="Mostrar u ocultar contraseña">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="rt-auth-actions-row">
+                                <label class="rt-auth-remember-check" for="rememberMeCheckbox">
+                                    <input type="checkbox" id="rememberMeCheckbox">
+                                    <span>Recordarme</span>
+                                </label>
+                                <a href="#" id="forgotPasswordLink" class="rt-auth-forgot-link">¿Olvidaste tu contraseña?</a>
+                            </div>
+
+                            <button type="submit" id="loginSubmitBtn" class="rt-auth-submit-btn">
+                                <span>Iniciar sesión</span>
+                                <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </form>
+
+                        <div class="rt-auth-or-divider">
+                            <span>o continúa con</span>
+                        </div>
+
+                        <!-- Accesos de registro separados para Cliente y Proveedor -->
+                        <div class="rt-auth-register-buttons">
+                            <button type="button" class="rt-auth-register-btn" id="btnGoRegisterClient">
+                                <i class="bi bi-person"></i>
+                                <span>Registrarse como Cliente</span>
+                            </button>
+                            <button type="button" class="rt-auth-register-btn" id="btnGoRegisterProvider">
+                                <i class="bi bi-building"></i>
+                                <span>Registrarse como Proveedor</span>
+                            </button>
+                        </div>
+
+                        <!-- Mensaje discreto de seguridad -->
+                        <div class="rt-auth-safe-note">
+                            <i class="bi bi-shield-lock"></i>
+                            <span>Tus datos están seguros con nosotros.</span>
+                        </div>
+
+                        <!-- Accesos rápidos con cuentas semilla para pruebas y demostración -->
+                        <div class="rt-auth-demo-toolbar">
+                            <div class="rt-auth-demo-header">
+                                <i class="bi bi-lightning-charge text-warning"></i>
+                                <span>Cuentas de Prueba (1 Clic):</span>
+                            </div>
+                            <div class="rt-auth-demo-chips">
+                                <button type="button" class="rt-auth-demo-chip demo-fill-btn"
+                                        data-email="cliente.dev@rentatools.com" data-pass="Password123!"
+                                        title="Autocompletar credenciales de Cliente">
+                                    <i class="bi bi-person text-warning"></i>CLIENTE
+                                </button>
+                                <button type="button" class="rt-auth-demo-chip demo-fill-btn"
+                                        data-email="proveedor1.dev@rentatools.com" data-pass="Password123!"
+                                        title="Autocompletar credenciales de Proveedor">
+                                    <i class="bi bi-briefcase text-warning"></i>PROVEEDOR
+                                </button>
+                                <button type="button" class="rt-auth-demo-chip demo-fill-btn"
+                                        data-email="admin.dev@rentatools.com" data-pass="Password123!"
+                                        title="Autocompletar credenciales de Administrador">
+                                    <i class="bi bi-shield-lock text-warning"></i>ADMIN
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- VISTA 2: REGISTRO DE CLIENTE -->
+                    <div id="authViewRegisterClient" class="d-none">
+                        <div class="rt-auth-view-header">
+                            <button type="button" class="rt-auth-back-btn btnBackToLogin">
+                                <i class="bi bi-arrow-left"></i>
+                                <span>Volver a Iniciar sesión</span>
+                            </button>
+                            <span class="badge bg-warning text-dark fw-bold">Registro Cliente</span>
+                        </div>
+
+                        <div class="mb-3 text-center">
+                            <h3 class="h5 fw-bold text-white mb-1">Crea tu cuenta de Cliente</h3>
+                            <p class="text-white-50 small mb-0">Alquila maquinaria y gestiona reservas fácilmente.</p>
+                        </div>
+
+                        <form id="registerClientForm" novalidate>
+                            <div class="rt-auth-field">
+                                <label for="clientFullName" class="rt-auth-field-label">Nombre Completo *</label>
+                                <div class="rt-auth-input-container">
+                                    <i class="bi bi-person rt-auth-input-icon"></i>
+                                    <input type="text" id="clientFullName" class="rt-auth-text-input" required maxlength="150"
+                                           placeholder="Ej. Ana María Torres" autocomplete="name">
+                                </div>
+                            </div>
+
+                            <div class="rt-auth-field">
+                                <label for="clientEmail" class="rt-auth-field-label">Correo Electrónico *</label>
+                                <div class="rt-auth-input-container">
+                                    <i class="bi bi-envelope rt-auth-input-icon"></i>
+                                    <input type="email" id="clientEmail" class="rt-auth-text-input" required maxlength="254"
+                                           placeholder="cliente@ejemplo.com" autocomplete="email">
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-6">
+                                    <div class="rt-auth-field">
+                                        <label for="clientPassword" class="rt-auth-field-label">Contraseña (mín. 8) *</label>
+                                        <div class="rt-auth-input-container">
+                                            <i class="bi bi-lock rt-auth-input-icon"></i>
+                                            <input type="password" id="clientPassword" class="rt-auth-text-input" required
+                                                   minlength="8" maxlength="72" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="rt-auth-field">
+                                        <label for="clientPhone" class="rt-auth-field-label">Teléfono</label>
+                                        <div class="rt-auth-input-container">
+                                            <i class="bi bi-telephone rt-auth-input-icon"></i>
+                                            <input type="tel" id="clientPhone" class="rt-auth-text-input" inputmode="numeric"
+                                                   maxlength="15" pattern="[0-9]{7,15}" placeholder="Solo números (ej. 3001112233)" autocomplete="tel">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="registerClientBtn" class="rt-auth-submit-btn mt-2">
+                                <i class="bi bi-person-check me-1"></i>
+                                <span>Crear Cuenta de Cliente</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- VISTA 3: REGISTRO DE PROVEEDOR -->
+                    <div id="authViewRegisterProvider" class="d-none">
+                        <div class="rt-auth-view-header">
+                            <button type="button" class="rt-auth-back-btn btnBackToLogin">
+                                <i class="bi bi-arrow-left"></i>
+                                <span>Volver a Iniciar sesión</span>
+                            </button>
+                            <span class="badge bg-warning text-dark fw-bold">Registro Proveedor</span>
+                        </div>
+
+                        <div class="alert alert-info py-2 px-3 small mb-3 border-0 bg-info-subtle text-info-emphasis">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Los proveedores registrados requieren aprobación de un administrador (<code>ADMIN</code>) antes de poder publicar maquinaria en el catálogo activo.
+                        </div>
+
+                        <form id="registerProviderForm" novalidate>
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-6">
+                                    <div class="rt-auth-field">
+                                        <label for="provFullName" class="rt-auth-field-label">Representante *</label>
+                                        <div class="rt-auth-input-container">
+                                            <i class="bi bi-person rt-auth-input-icon"></i>
+                                            <input type="text" id="provFullName" class="rt-auth-text-input" required maxlength="150"
+                                                   placeholder="Ej. Carlos Gómez" autocomplete="name">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="rt-auth-field">
+                                        <label for="provPhone" class="rt-auth-field-label">Teléfono</label>
+                                        <div class="rt-auth-input-container">
+                                            <i class="bi bi-telephone rt-auth-input-icon"></i>
+                                            <input type="tel" id="provPhone" class="rt-auth-text-input" inputmode="numeric"
+                                                   maxlength="15" pattern="[0-9]{7,15}" placeholder="Solo números (ej. 3009998877)" autocomplete="tel">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-7">
+                                    <div class="rt-auth-field">
+                                        <label for="provBusinessName" class="rt-auth-field-label">Razón Social *</label>
+                                        <div class="rt-auth-input-container">
+                                            <i class="bi bi-building rt-auth-input-icon"></i>
+                                            <input type="text" id="provBusinessName" class="rt-auth-text-input" required maxlength="150"
+                                                   placeholder="Maquinaria del Norte SAS">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-5">
+                                    <div class="rt-auth-field">
+                                        <label for="provTaxId" class="rt-auth-field-label">NIT / RUC *</label>
+                                        <div class="rt-auth-input-container">
+                                            <i class="bi bi-card-text rt-auth-input-icon"></i>
+                                            <input type="text" id="provTaxId" class="rt-auth-text-input font-monospace text-uppercase" required
+                                                   minlength="5" maxlength="20" placeholder="900123456-7">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-2">
+                                <div class="col-sm-6">
+                                    <div class="rt-auth-field">
+                                        <label for="provEmail" class="rt-auth-field-label">Correo Corporativo *</label>
+                                        <div class="rt-auth-input-container">
+                                            <i class="bi bi-envelope rt-auth-input-icon"></i>
+                                            <input type="email" id="provEmail" class="rt-auth-text-input" required maxlength="254"
+                                                   placeholder="contacto@empresa.com" autocomplete="email">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="rt-auth-field">
+                                        <label for="provPassword" class="rt-auth-field-label">Contraseña (mín. 8) *</label>
+                                        <div class="rt-auth-input-container">
+                                            <i class="bi bi-lock rt-auth-input-icon"></i>
+                                            <input type="password" id="provPassword" class="rt-auth-text-input" required
+                                                   minlength="8" maxlength="72" placeholder="Mínimo 8 caracteres" autocomplete="new-password">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" id="registerProviderBtn" class="rt-auth-submit-btn mt-2">
+                                <i class="bi bi-building-check me-1"></i>
+                                <span>Registrar Perfil de Proveedor</span>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal Informativo: Recuperación de Contraseña -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content bg-dark text-white border border-secondary border-opacity-25" style="border-radius: 16px;">
+                <div class="modal-header border-secondary border-opacity-25">
+                    <h5 class="modal-title fw-bold" id="forgotPasswordModalLabel">
+                        <i class="bi bi-key text-warning me-2"></i>Recuperación de Contraseña
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body p-4 text-start">
+                    <p class="text-white-50">
+                        Por motivos de seguridad institucional y auditoría, el restablecimiento automático de contraseña se encuentra gestionado por el Administrador del Sistema.
+                    </p>
+                    <div class="p-3 rounded-3 mb-3" style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.25);">
+                        <div class="small fw-semibold text-warning mb-1">
+                            <i class="bi bi-shield-lock me-1"></i>Procedimiento de Recuperación:
+                        </div>
+                        <ul class="small text-white-50 mb-0 ps-3">
+                            <li>Comunícate con soporte técnico: <strong>soporte@rentatools.com</strong></li>
+                            <li>O contacta al administrador de tu organización con tu documento de identidad / NIT registrado.</li>
+                        </ul>
+                    </div>
+                    <p class="small text-white-50 mb-0">
+                        Si estás en un entorno de desarrollo local, puedes acceder inmediatamente usando las cuentas de prueba disponibles al pie del formulario.
+                    </p>
+                </div>
+                <div class="modal-footer border-secondary border-opacity-25">
+                    <button type="button" class="btn btn-rt-primary btn-sm px-3" data-bs-dismiss="modal">Entendido</button>
+                </div>
             </div>
         </div>
-    </footer>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="js/auth-page.js"></script>

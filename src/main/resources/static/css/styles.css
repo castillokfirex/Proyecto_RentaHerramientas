@@ -63,126 +63,412 @@ body {
 }
 
 /* ==========================================================================
-   Header & Sticky Navbar (Solución al blanco al subir / layout shifts)
+   Header & Sticky Navbar (Diseño Limpio y Moderno)
    ========================================================================== */
 #rt-navbar-host {
     position: sticky;
     top: 0;
     z-index: 1040;
     width: 100%;
-    min-height: 64px;
-    background: rgba(9, 13, 22, 0.96);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    min-height: 68px;
+    background: rgba(7, 10, 18, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
     transition: background 0.2s ease, box-shadow 0.2s ease;
 }
 
 .rt-navbar {
     background: transparent !important;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
 }
 
-.rt-brand-badge {
-    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-    color: #090d16;
-    font-weight: 800;
-    padding: 0.3rem 0.65rem;
-    border-radius: var(--rt-radius-sm);
-    letter-spacing: -0.02em;
-    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+.rt-brand-badge-hex {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.12) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.45);
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.25);
+    transition: transform 0.25s ease;
 }
 
-.navbar-brand {
-    letter-spacing: -0.02em;
-    font-size: 1.25rem;
-    color: #ffffff !important;
-    transition: opacity 0.2s ease;
+.navbar-brand:hover .rt-brand-badge-hex {
+    transform: rotate(-6deg) scale(1.05);
 }
 
-.navbar-brand:hover {
-    opacity: 0.9;
+.rt-brand-sub {
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: #f59e0b;
+    letter-spacing: 0.14em;
+    margin-top: 2px;
 }
 
-.nav-link {
-    color: #cbd5e1 !important;
-    font-size: 0.92rem;
+.rt-nav-link {
+    color: #94a3b8 !important;
+    font-size: 0.9rem;
     font-weight: 500;
-    padding: 0.5rem 0.85rem !important;
-    border-radius: var(--rt-radius-sm);
+    padding: 0.45rem 0.75rem !important;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.rt-nav-link:hover {
+    color: #ffffff !important;
+}
+
+.rt-nav-link.active {
+    color: #ffffff !important;
+    font-weight: 600;
+    border-bottom: 2px solid #f59e0b;
+}
+
+.rt-btn-nav-primary {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    color: #090d16 !important;
+    font-weight: 700;
+    font-size: 0.88rem;
+    border-radius: 0.6rem;
+    border: none;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.rt-btn-nav-primary:hover {
+    background: #d97706;
+    color: #000000 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5);
+}
+
+.btn-icon-glass {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #cbd5e1;
     transition: all 0.2s ease;
 }
 
-.nav-link:hover {
-    color: #ffffff !important;
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.nav-link.active {
-    color: var(--rt-primary) !important;
-    background: rgba(245, 158, 11, 0.12);
-    font-weight: 600;
+.btn-icon-glass:hover {
+    background: rgba(255, 255, 255, 0.16);
+    color: #f59e0b !important;
+    transform: scale(1.05);
 }
 
 /* ==========================================================================
-   Hero Section & 3D Showcase Banner
+   Hero Section & Cinematic Inspiration Banner
    ========================================================================== */
 .rt-hero {
     background:
-        radial-gradient(120% 120% at 85% 15%, rgba(245, 158, 11, 0.16) 0%, rgba(15, 23, 42, 0) 50%),
-        radial-gradient(80% 80% at 15% 20%, rgba(30, 41, 59, 0.9) 0%, rgba(9, 13, 22, 1) 100%);
+        linear-gradient(90deg, #070a12 0%, rgba(7, 10, 18, 0.94) 42%, rgba(7, 10, 18, 0.68) 75%, rgba(7, 10, 18, 0.35) 100%),
+        url('../images/hero-bg.jpg') center right / cover no-repeat;
     color: #ffffff;
     position: relative;
     overflow: hidden;
     border-bottom: 2px solid rgba(245, 158, 11, 0.8);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.4);
 }
 
-.rt-hero-badge {
+.rt-hero-tag {
+    font-size: 0.74rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #94a3b8;
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    background: rgba(245, 158, 11, 0.15);
-    border: 1px solid rgba(245, 158, 11, 0.4);
-    color: #fbbf24;
-    padding: 0.35rem 0.8rem;
-    border-radius: 9999px;
-    font-size: 0.82rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    backdrop-filter: blur(6px);
 }
 
 .rt-hero-title {
-    font-size: 2.25rem;
+    font-size: 2.75rem;
     font-weight: 800;
-    letter-spacing: -0.03em;
-    line-height: 1.15;
-    background: linear-gradient(180deg, #ffffff 30%, #cbd5e1 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.035em;
+    line-height: 1.12;
+    color: #ffffff;
 }
 
 .rt-hero-desc {
+    color: #cbd5e1;
+    font-size: 1.02rem;
+    line-height: 1.6;
+    max-width: 580px;
+}
+
+/* Pill Search Bar */
+.rt-search-pill {
+    background: #ffffff;
+    border-radius: 9999px;
+    padding: 0.35rem 0.45rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.25s ease;
+    max-width: 600px;
+}
+
+.rt-search-pill:focus-within {
+    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.35), 0 12px 35px rgba(0, 0, 0, 0.45);
+    border-color: var(--rt-primary);
+}
+
+.rt-btn-search {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    color: #090d16;
+    font-weight: 700;
+    border: none;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    transition: all 0.2s ease;
+}
+
+.rt-btn-search:hover {
+    background: #d97706;
+    color: #000;
+    transform: translateY(-1px);
+}
+
+/* Trust Badges */
+.rt-trust-icon-box {
+    width: 38px;
+    height: 38px;
+    border-radius: 9px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* Script Motto Tag */
+.rt-hero-script-tag {
+    font-family: Georgia, 'Playfair Display', serif;
+    font-style: italic;
+    font-weight: 700;
+    font-size: 1.35rem;
+    color: #fbbf24;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    transform: rotate(-3deg);
+    display: inline-block;
+}
+
+/* Category Dock Bar */
+.rt-category-dock {
+    background: rgba(11, 17, 32, 0.88);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--rt-radius-lg);
+    box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6);
+}
+
+.rt-dock-header {
+    min-width: 195px;
+    flex-shrink: 0;
+}
+
+.rt-dock-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: #fbbf24;
+    display: block;
+}
+
+.rt-dock-desc {
+    font-size: 0.8rem;
     color: #94a3b8;
-    font-size: 0.98rem;
-    line-height: 1.55;
-    max-width: 560px;
+}
+
+.rt-dock-items-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(245, 158, 11, 0.35) transparent;
+}
+
+.rt-dock-items-scroll::-webkit-scrollbar {
+    height: 4px;
+}
+
+.rt-dock-items-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.rt-dock-items-scroll::-webkit-scrollbar-thumb {
+    background: rgba(245, 158, 11, 0.35);
+    border-radius: 9999px;
+}
+
+.rt-dock-items-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(245, 158, 11, 0.7);
+}
+
+.rt-dock-card {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    color: #cbd5e1;
+    padding: 0.65rem 0.75rem 0.55rem;
+    border-radius: var(--rt-radius-md);
+    min-width: 135px;
+    height: 110px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.rt-dock-card:hover {
+    background: rgba(245, 158, 11, 0.14);
+    border-color: rgba(245, 158, 11, 0.5);
+    color: #ffffff;
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px -6px rgba(245, 158, 11, 0.25);
+}
+
+.rt-dock-img-box {
+    width: 58px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rt-dock-img {
+    max-width: 54px;
+    max-height: 50px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+    transition: transform 0.25s ease;
+}
+
+.rt-dock-card:hover .rt-dock-img {
+    transform: scale(1.12);
+}
+
+.rt-dock-meta {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.35rem;
+    font-size: 0.74rem;
+    font-weight: 600;
+}
+
+.rt-dock-title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 95px;
+}
+
+.rt-dock-arrow {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.rt-dock-card:hover .rt-dock-arrow {
+    transform: translateX(3px);
+    color: #fbbf24;
+}
+
+/* Pricing Rate Boxes in Tool Cards */
+.rt-rate-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--rt-radius-sm);
+    padding: 0.35rem 0.15rem;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.rt-rate-box:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.rt-rate-label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    margin-bottom: 2px;
+}
+
+.rt-rate-val {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: -0.03em;
+}
+
+/* Value Proposition Section */
+.rt-value-prop-section {
+    background-color: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.rt-section-accent-line {
+    display: inline-block;
+    width: 28px;
+    height: 4px;
+    background: #f59e0b;
+    border-radius: 2px;
+}
+
+.rt-benefit-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: var(--rt-radius-lg);
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    transition: all 0.25s ease;
+}
+
+.rt-benefit-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.1);
+    border-color: rgba(245, 158, 11, 0.45) !important;
+}
+
+.rt-benefit-icon-wrapper {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: rgba(245, 158, 11, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* 3D Tool Hero Showcase Card */
 .rt-hero-3d-card {
     position: relative;
-    background: linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.85) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(145deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: var(--rt-radius-xl);
     padding: 1.25rem;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(16px);
     overflow: hidden;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -190,7 +476,7 @@ body {
 
 .rt-hero-3d-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 30px 60px -12px rgba(245, 158, 11, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 30px 60px -12px rgba(245, 158, 11, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     border-color: rgba(245, 158, 11, 0.4);
 }
 
@@ -226,8 +512,8 @@ body {
     bottom: 1rem;
     left: 1rem;
     right: 1rem;
-    background: rgba(15, 23, 42, 0.88);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     border-radius: var(--rt-radius-md);
     padding: 0.5rem 0.85rem;
     display: flex;
@@ -237,26 +523,12 @@ body {
     backdrop-filter: blur(8px);
 }
 
-/* Elevated Search Bar */
-.rt-search-box {
-    background: #ffffff;
-    border-radius: var(--rt-radius-lg);
-    box-shadow: var(--rt-shadow-lg);
-    padding: 0.35rem 0.45rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.25s ease;
-}
-
-.rt-search-box:focus-within {
-    box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.25), var(--rt-shadow-lg);
-    border-color: var(--rt-primary);
-}
-
 .rt-search-input {
     font-size: 0.96rem;
     color: var(--rt-dark);
     font-weight: 500;
 }
+
 
 .rt-search-input::placeholder {
     color: #94a3b8;
@@ -647,6 +919,1536 @@ body {
 @keyframes rtSkeletonWave {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
+}
+
+/* ==========================================================================
+   RentaTools - Modern Industrial Auth Split-Screen Redesign
+   ========================================================================== */
+
+.rt-auth-body {
+    background-color: #060911 !important;
+    min-height: 100vh;
+    color: #e2e8f0;
+}
+
+.rt-auth-page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #060911;
+}
+
+.rt-auth-split-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* --- Panel Izquierdo: Identidad Industrial --- */
+.rt-auth-brand-side {
+    flex: 1 1 54%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3.5rem 4.5rem;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, rgba(6, 9, 17, 0.72) 0%, rgba(6, 9, 17, 0.42) 45%, rgba(6, 9, 17, 0.94) 100%),
+        radial-gradient(circle at 80% 50%, rgba(245, 158, 11, 0.14) 0%, transparent 60%),
+        url('../images/hero-bg.jpg') 68% center / cover no-repeat;
+}
+
+.rt-auth-brand-side::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at bottom left, rgba(6, 9, 17, 0.85) 0%, transparent 50%);
+}
+
+.rt-auth-brand-header {
+    position: relative;
+    z-index: 2;
+}
+
+.rt-auth-brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    text-decoration: none;
+}
+
+.rt-auth-brand-logo img {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+}
+
+.rt-auth-brand-center {
+    position: relative;
+    z-index: 2;
+    margin: auto 0;
+    padding: 2.5rem 0;
+}
+
+.rt-auth-pretitle {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    margin-bottom: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.rt-auth-main-title {
+    font-size: 3.4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #ffffff;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.25rem;
+}
+
+.rt-auth-main-title .rt-title-orange {
+    color: #f59e0b;
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.rt-auth-brand-desc {
+    color: #cbd5e1;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    max-width: 500px;
+    margin-bottom: 2.25rem;
+    font-weight: 400;
+}
+
+.rt-auth-features-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    max-width: 620px;
+}
+
+.rt-auth-feature-box {
+    background: rgba(11, 17, 30, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 12px;
+    padding: 1rem 0.9rem;
+    transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+}
+
+.rt-auth-feature-box:hover {
+    transform: translateY(-3px);
+    border-color: rgba(245, 158, 11, 0.4);
+    background: rgba(15, 23, 42, 0.85);
+}
+
+.rt-auth-feature-icon {
+    font-size: 1.35rem;
+    color: #f59e0b;
+    margin-bottom: 0.4rem;
+    display: inline-block;
+}
+
+.rt-auth-feature-heading {
+    font-size: 0.86rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.15rem;
+}
+
+.rt-auth-feature-subtext {
+    font-size: 0.73rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.rt-auth-brand-footer {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.rt-auth-quote-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    background: rgba(9, 14, 26, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 3px solid #f59e0b;
+    border-radius: 10px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.86rem;
+    color: #e2e8f0;
+    max-width: 480px;
+}
+
+.rt-auth-quote-badge i {
+    font-size: 1.25rem;
+    color: #f59e0b;
+}
+
+.rt-auth-back-home {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.2s ease;
+}
+
+.rt-auth-back-home:hover {
+    color: #f59e0b;
+}
+
+/* --- Panel Derecho: Formulario de Autenticación --- */
+.rt-auth-form-side {
+    flex: 1 1 46%;
+    background-color: #060911;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2.5rem 2.5rem;
+    position: relative;
+    overflow-y: auto;
+}
+
+.rt-auth-form-side::before {
+    content: '';
+    position: absolute;
+    top: 15%;
+    right: 10%;
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.rt-auth-card-modern {
+    width: 100%;
+    max-width: 470px;
+    background: rgba(12, 18, 32, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 2.25rem 2.25rem;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 35px -10px rgba(245, 158, 11, 0.05);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    position: relative;
+    z-index: 2;
+}
+
+.rt-auth-card-header {
+    text-align: center;
+    margin-bottom: 1.6rem;
+}
+
+.rt-auth-card-logo {
+    display: inline-block;
+    margin-bottom: 0.85rem;
+}
+
+.rt-auth-card-logo img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+}
+
+.rt-auth-card-title {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 0.4rem;
+    letter-spacing: -0.02em;
+}
+
+.rt-auth-card-subtitle {
+    font-size: 0.86rem;
+    color: #94a3b8;
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+/* Selector Cliente / Proveedor */
+.rt-auth-role-tabs {
+    display: flex;
+    background: rgba(22, 30, 49, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 4px;
+    margin-bottom: 1.45rem;
+    gap: 4px;
+}
+
+.rt-auth-role-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.62rem 0.85rem;
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rt-auth-role-tab.active {
+    background: #f59e0b;
+    color: #090d16;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.rt-auth-role-tab:hover:not(.active) {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Form inputs */
+.rt-auth-field {
+    margin-bottom: 1.15rem;
+}
+
+.rt-auth-field-label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 0.45rem;
+}
+
+.rt-auth-input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.rt-auth-input-icon {
+    position: absolute;
+    left: 1rem;
+    color: #64748b;
+    font-size: 1rem;
+    pointer-events: none;
+    z-index: 2;
+    transition: color 0.2s ease;
+}
+
+.rt-auth-input-container:focus-within .rt-auth-input-icon {
+    color: #f59e0b;
+}
+
+.rt-auth-text-input {
+    width: 100%;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 0.72rem 1rem 0.72rem 2.65rem;
+    font-size: 0.9rem;
+    color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.rt-auth-text-input::placeholder {
+    color: #475569;
+}
+
+.rt-auth-text-input:focus {
+    background: #0f172a;
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.16);
+    color: #ffffff;
+    outline: none;
+}
+
+.rt-auth-text-input.is-invalid {
+    border-color: #ef4444 !important;
+    background: rgba(239, 68, 68, 0.06) !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.22) !important;
+}
+
+.rt-auth-field-error {
+    font-size: 0.74rem;
+    color: #f87171;
+    margin-top: 0.35rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-weight: 500;
+}
+
+.rt-auth-field-error i {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.rt-auth-eye-btn {
+    position: absolute;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    color: #64748b;
+    padding: 0.35rem;
+    font-size: 1.05rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease;
+    z-index: 2;
+}
+
+.rt-auth-eye-btn:hover {
+    color: #f59e0b;
+}
+
+/* Row opciones */
+.rt-auth-actions-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    margin-bottom: 1.35rem;
+}
+
+.rt-auth-remember-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #cbd5e1;
+    cursor: pointer;
+    user-select: none;
+    margin: 0;
+}
+
+.rt-auth-remember-check input[type="checkbox"] {
+    accent-color: #f59e0b;
+    width: 15px;
+    height: 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.rt-auth-forgot-link {
+    color: #f59e0b;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.rt-auth-forgot-link:hover {
+    color: #fbbf24;
+    text-decoration: underline;
+}
+
+/* Botón principal */
+.rt-auth-submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #090d16;
+    font-weight: 700;
+    font-size: 0.98rem;
+    border: none;
+    border-radius: 10px;
+    padding: 0.8rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
+}
+
+.rt-auth-submit-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.5);
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #000000;
+}
+
+.rt-auth-submit-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Divisor */
+.rt-auth-or-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 1.4rem 0;
+    color: #64748b;
+    font-size: 0.78rem;
+}
+
+.rt-auth-or-divider::before,
+.rt-auth-or-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rt-auth-or-divider span {
+    padding: 0 0.85rem;
+    letter-spacing: 0.02em;
+}
+
+/* Botones de Registro dual */
+.rt-auth-register-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.35rem;
+}
+
+.rt-auth-register-btn {
+    background: rgba(18, 25, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #e2e8f0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.68rem 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    text-decoration: none;
+}
+
+.rt-auth-register-btn:hover {
+    border-color: #f59e0b;
+    color: #ffffff;
+    background: rgba(245, 158, 11, 0.08);
+    transform: translateY(-1px);
+}
+
+.rt-auth-register-btn i {
+    font-size: 0.95rem;
+    color: #f59e0b;
+}
+
+/* Nota de seguridad */
+.rt-auth-safe-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    color: #64748b;
+    font-size: 0.76rem;
+    margin-top: 0.5rem;
+}
+
+.rt-auth-safe-note i {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+/* Barra de Cuentas Demo */
+.rt-auth-demo-toolbar {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+
+.rt-auth-demo-header {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+}
+
+.rt-auth-demo-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    justify-content: center;
+}
+
+.rt-auth-demo-chip {
+    background: rgba(18, 25, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1;
+    font-size: 0.73rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: 6px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.2s ease;
+}
+
+.rt-auth-demo-chip:hover {
+    border-color: #f59e0b;
+    color: #f59e0b;
+    background: rgba(245, 158, 11, 0.08);
+}
+
+/* Vistas de Registro dentro de la tarjeta */
+.rt-auth-view-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.rt-auth-back-btn {
+    background: transparent;
+    border: none;
+    color: #f59e0b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: color 0.2s ease;
+}
+
+.rt-auth-back-btn:hover {
+    color: #fbbf24;
+    text-decoration: underline;
+}
+
+/* Responsividad */
+@media (max-width: 991.98px) {
+    .rt-auth-split-wrapper {
+        flex-direction: column;
+    }
+
+    .rt-auth-brand-side {
+        flex: 0 0 auto;
+        padding: 2.5rem 1.5rem;
+        min-height: auto;
+    }
+
+    .rt-auth-main-title {
+        font-size: 2.25rem;
+    }
+
+    .rt-auth-features-row {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .rt-auth-form-side {
+        flex: 1 0 auto;
+        padding: 2rem 1.25rem 3rem;
+    }
+
+    .rt-auth-card-modern {
+        padding: 1.75rem 1.25rem;
+    }
+
+    .rt-auth-register-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ==========================================================================
+   RentaTools - Provider Dashboard SaaS Redesign (Isolated Module Styles)
+   ========================================================================== */
+
+/* Header / Hero del Proveedor */
+.rt-prov-hero {
+    background:
+        linear-gradient(90deg, #070a12 0%, rgba(7, 10, 18, 0.95) 35%, rgba(7, 10, 18, 0.8) 70%, rgba(7, 10, 18, 0.55) 100%),
+        radial-gradient(circle at 85% 40%, rgba(245, 158, 11, 0.14) 0%, transparent 60%),
+        url('../images/hero-bg.jpg') center right / cover no-repeat;
+    color: #ffffff;
+    position: relative;
+    border-bottom: 2px solid rgba(245, 158, 11, 0.85);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    padding: 2.25rem 0;
+}
+
+.rt-prov-hero-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.rt-prov-badge-role {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.45);
+    color: #f59e0b;
+    font-weight: 700;
+    font-size: 0.74rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.rt-prov-hero-title {
+    font-size: 1.95rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin-top: 0.45rem;
+    margin-bottom: 0.35rem;
+}
+
+.rt-prov-hero-desc {
+    color: #94a3b8;
+    font-size: 0.92rem;
+    margin-bottom: 0;
+    max-width: 660px;
+    line-height: 1.5;
+}
+
+.rt-prov-hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.rt-prov-btn-primary {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #090d16 !important;
+    font-weight: 700;
+    font-size: 0.88rem;
+    border: none;
+    border-radius: 8px;
+    padding: 0.58rem 1.15rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.3);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.rt-prov-btn-primary:hover {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+    color: #000000 !important;
+}
+
+.rt-prov-btn-secondary {
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #e2e8f0 !important;
+    font-weight: 600;
+    font-size: 0.88rem;
+    border-radius: 8px;
+    padding: 0.58rem 1.15rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.rt-prov-btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(245, 158, 11, 0.45);
+    color: #ffffff !important;
+    transform: translateY(-1px);
+}
+
+/* Barra de Navegación por Pestañas del Proveedor */
+.rt-prov-tabs-wrapper {
+    margin-bottom: 1.75rem;
+}
+
+.rt-prov-nav-tabs {
+    border: none !important;
+    background: #090e18;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 14px;
+    padding: 6px;
+    gap: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
+.rt-prov-nav-tabs .nav-item {
+    flex: 1 1 200px;
+}
+
+.rt-prov-nav-tabs .nav-link {
+    border: 1px solid transparent !important;
+    border-radius: 10px !important;
+    color: #94a3b8 !important;
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0.72rem 1.1rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: transparent;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+}
+
+.rt-prov-nav-tabs .nav-link:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    transform: translateY(-1px);
+}
+
+.rt-prov-nav-tabs .nav-link.active {
+    background: #f59e0b !important;
+    color: #090d16 !important;
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+}
+
+.rt-prov-nav-tabs .nav-link.active i {
+    color: #090d16 !important;
+}
+
+.rt-prov-nav-tabs .nav-link.active #pendingRequestsBadge {
+    background: #090d16 !important;
+    color: #f59e0b !important;
+}
+
+/* Banner de Proveedor No Autenticado */
+.rt-prov-unauth-card {
+    background: #0d1424 !important;
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+    color: #e2e8f0;
+}
+
+/* Adaptación Responsive del Módulo de Proveedores */
+@media (max-width: 991.98px) {
+    .rt-prov-hero {
+        padding: 1.75rem 0;
+    }
+
+    .rt-prov-hero-title {
+        font-size: 1.55rem;
+    }
+
+    .rt-prov-hero-actions {
+        width: 100%;
+    }
+
+    .rt-prov-btn-primary,
+    .rt-prov-btn-secondary {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    .rt-prov-nav-tabs .nav-item {
+        flex: 1 1 100%;
+    }
+
+    .rt-prov-nav-tabs .nav-link {
+        justify-content: flex-start;
+        padding: 0.65rem 1rem !important;
+    }
+}
+
+/* --- Sección 1: Mis Herramientas y Tarifas --- */
+.rt-prov-section-header {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.rt-prov-section-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.2rem;
+}
+
+.rt-prov-section-desc {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 0;
+}
+
+/* Tarjeta de Herramienta en el Dashboard de Proveedor */
+#providerToolsGrid .rt-card {
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 14px !important;
+    background: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+    overflow: hidden;
+}
+
+#providerToolsGrid .rt-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px -6px rgba(15, 23, 42, 0.12), 0 6px 12px -4px rgba(15, 23, 42, 0.06);
+    border-color: rgba(245, 158, 11, 0.45) !important;
+}
+
+#providerToolsGrid .relative.h-48 {
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%) !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    min-height: 195px;
+    max-height: 195px;
+    padding: 1rem !important;
+}
+
+#providerToolsGrid .relative.h-48 img {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+    transition: transform 0.3s ease;
+}
+
+#providerToolsGrid .rt-card:hover .relative.h-48 img {
+    transform: scale(1.06);
+}
+
+#providerToolsGrid .badge {
+    font-weight: 700;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    border-radius: 6px;
+    padding: 0.35rem 0.6rem;
+}
+
+#providerToolsGrid .badge.bg-dark {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#providerToolsGrid .card-body {
+    padding: 1.25rem !important;
+}
+
+#providerToolsGrid .card-body h3 {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.35;
+    margin-bottom: 0.25rem;
+}
+
+#providerToolsGrid .rt-rate-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.45rem 0.35rem;
+    text-align: center;
+    transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+#providerToolsGrid .rt-card:hover .rt-rate-box {
+    background: #ffffff;
+    border-color: #cbd5e1;
+}
+
+#providerToolsGrid .rt-rate-label {
+    font-size: 0.68rem;
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 0.1rem;
+}
+
+#providerToolsGrid .rt-rate-val {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #0f172a;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+#providerToolsGrid .edit-tool-btn {
+    border-radius: 8px;
+    font-weight: 600;
+    border-color: #cbd5e1;
+    color: #334155;
+    transition: all 0.2s ease;
+}
+
+#providerToolsGrid .edit-tool-btn:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+
+#providerToolsGrid .publish-tool-btn {
+    border-radius: 8px;
+    font-weight: 600;
+    background: #16a34a;
+    border-color: #16a34a;
+}
+
+#providerToolsGrid .publish-tool-btn:hover {
+    background: #15803d;
+    border-color: #15803d;
+}
+
+#providerToolsGrid .deactivate-tool-btn {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Modal de Configuración de Herramienta */
+#toolEditorModal .modal-content {
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+#toolEditorModal .modal-header {
+    background: #0b111e !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1.1rem 1.5rem;
+}
+
+#toolEditorModal .modal-body {
+    padding: 1.5rem;
+}
+
+#toolEditorModal .form-label {
+    color: #334155;
+    font-weight: 600;
+    font-size: 0.82rem;
+    margin-bottom: 0.35rem;
+}
+
+#toolEditorModal .form-control,
+#toolEditorModal .form-select {
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.88rem;
+    transition: all 0.2s ease;
+}
+
+#toolEditorModal .form-control:focus,
+#toolEditorModal .form-select:focus {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.18);
+}
+
+#toolEditorModal .card.bg-light {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+}
+
+#toolImagesGallery .card {
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    transition: transform 0.2s ease;
+}
+
+#toolImagesGallery .card:hover {
+    transform: translateY(-2px);
+    border-color: #f59e0b;
+}
+
+/* =========================================================
+ * Provider Dashboard: Unidades Físicas (Etapa 3)
+ * ========================================================= */
+.rt-prov-card {
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+    background: #ffffff;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.rt-prov-card:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.07);
+}
+
+.rt-prov-card-icon {
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(245, 158, 11, 0.12);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #f59e0b;
+}
+
+.rt-prov-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.rt-prov-table thead th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 700;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.rt-prov-table tbody td {
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.rt-prov-table tbody tr:hover td {
+    background-color: #f8fafc;
+}
+
+.select-unit-btn {
+    border-radius: 7px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.28rem 0.75rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.select-unit-btn:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+    transform: translateY(-1px);
+}
+
+/* Badges de Unidad Física */
+.badge-unit-AVAILABLE {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+    border: 1px solid #bbf7d0 !important;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.73rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-unit-AVAILABLE::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #16a34a;
+}
+
+.badge-unit-MAINTENANCE {
+    background-color: #ffedd5 !important;
+    color: #9a3412 !important;
+    border: 1px solid #fed7aa !important;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.73rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-unit-MAINTENANCE::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #f59e0b;
+}
+
+.badge-unit-RETIRED {
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.73rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.badge-unit-RETIRED::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #dc2626;
+}
+
+/* =========================================================
+ * Provider Dashboard: Bandeja de Solicitudes (Etapa 4)
+ * ========================================================= */
+.rt-prov-filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.rt-prov-filter-group .btn {
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.42rem 0.95rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #475569;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rt-prov-filter-group .btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+    border-color: #cbd5e1;
+}
+
+.rt-prov-filter-group .btn.active,
+.rt-prov-filter-group .btn.btn-dark.active {
+    background: #0b111e !important;
+    color: #ffffff !important;
+    border-color: #0b111e !important;
+    box-shadow: 0 3px 10px rgba(11, 17, 30, 0.25);
+}
+
+#providerReservationsList .rt-card {
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.04);
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+#providerReservationsList .rt-card:hover {
+    border-color: #cbd5e1;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px -4px rgba(15, 23, 42, 0.08);
+}
+
+.rt-code-badge {
+    background: #0f172a;
+    color: #f59e0b;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 6px;
+    letter-spacing: 0.02em;
+}
+
+/* Badges de Estado de Reserva */
+.badge-status-PENDING {
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+    border: 1px solid #fde68a !important;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.73rem;
+}
+
+.badge-status-CONFIRMED {
+    background-color: #e0f2fe !important;
+    color: #0369a1 !important;
+    border: 1px solid #bae6fd !important;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.73rem;
+}
+
+.badge-status-READY_FOR_PICKUP {
+    background-color: #ede9fe !important;
+    color: #6d28d9 !important;
+    border: 1px solid #ddd6fe !important;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.73rem;
+}
+
+.badge-status-ACTIVE {
+    background-color: #dcfce7 !important;
+    color: #166534 !important;
+    border: 1px solid #bbf7d0 !important;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.73rem;
+}
+
+.badge-status-RETURNED {
+    background-color: #ccfbf1 !important;
+    color: #0f766e !important;
+    border: 1px solid #99f6e4 !important;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.73rem;
+}
+
+.badge-status-CLOSED {
+    background-color: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.73rem;
+}
+
+.badge-status-REJECTED,
+.badge-status-CANCELLED {
+    background-color: #fee2e2 !important;
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+    border-radius: 20px;
+    padding: 0.35rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.73rem;
+}
+
+#providerReservationsList .confirm-res-btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.38rem 0.85rem;
+    background-color: #16a34a;
+    border-color: #16a34a;
+    transition: all 0.2s ease;
+}
+
+#providerReservationsList .confirm-res-btn:hover {
+    background-color: #15803d;
+    border-color: #15803d;
+    transform: translateY(-1px);
+}
+
+#providerReservationsList .reject-res-btn {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.38rem 0.85rem;
+    transition: all 0.2s ease;
+}
+
+#providerReservationsList .reject-res-btn:hover {
+    transform: translateY(-1px);
+}
+
+#providerReservationsList .go-inspect-btn {
+    border-radius: 8px;
+    font-weight: 700;
+    padding: 0.38rem 0.95rem;
+    transition: all 0.2s ease;
+}
+
+#providerReservationsList .go-inspect-btn:hover {
+    transform: translateY(-1px);
+}
+
+/* Modal Rechazo */
+#rejectReservationModal .modal-content {
+    border-radius: 16px;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+}
+
+#rejectReservationModal .modal-header {
+    background: #991b1b !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.1rem 1.5rem;
+}
+
+#rejectReservationModal .modal-body textarea {
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+}
+
+#rejectReservationModal .modal-body textarea:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18);
+}
+
+/* =========================================================
+ * Provider Dashboard: Inspecciones y Devoluciones (Etapa 5)
+ * ========================================================= */
+.rt-prov-latefee-box {
+    background: #fffbeb !important;
+    border: 1px solid #fde68a !important;
+    border-left: 4px solid #f59e0b !important;
+    border-radius: 10px !important;
+    color: #92400e !important;
+}
+
+.rt-prov-checklist-table thead th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 700;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.65rem 0.75rem;
+}
+
+.rt-prov-checklist-table tbody td {
+    padding: 0.65rem 0.75rem;
+    vertical-align: middle;
+}
+
+.rt-checklist-row:hover td {
+    background-color: #fbfcfe;
+}
+
+.checklist-result-select {
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    border-color: #cbd5e1;
+}
+
+.checklist-note-input {
+    border-radius: 6px;
+    font-size: 0.82rem;
+    border-color: #cbd5e1;
+}
+
+#reservationInspectionsHistory .card.bg-light {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    transition: all 0.2s ease;
+}
+
+#reservationInspectionsHistory .card.bg-light:hover {
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
+}
+
+.preview-insp-photo-btn {
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    border-color: #cbd5e1;
+    color: #334155;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.preview-insp-photo-btn:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+}
+
+.attach-extra-photo-form input[type="file"] {
+    border-radius: 6px;
+    font-size: 0.78rem;
+}
+
+.attach-extra-photo-form button {
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+
+/* =========================================================
+ * Provider Dashboard: Responsive & Breakpoints (Etapa 6)
+ * ========================================================= */
+@media (max-width: 991.98px) {
+    .rt-prov-hero-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .rt-prov-hero-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .rt-prov-hero-title {
+        font-size: 1.5rem;
+    }
+
+    .rt-prov-section-header {
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .rt-prov-tabs-wrapper {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .rt-prov-filter-group {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.5rem;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .rt-prov-filter-group .btn {
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .rt-prov-card {
+        padding: 1.25rem !important;
+    }
 }
 
 /* Print styles */
