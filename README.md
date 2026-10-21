@@ -1,311 +1,507 @@
-# RentaTools — Plataforma de Renta de Herramientas y Maquinaria
+# RentaTools — Plataforma Integral de Alquiler de Maquinaria y Herramientas
 
-> **Monolito Modular · Arquitectura Hexagonal (Puertos y Adaptadores) · Domain-Driven Design (DDD) · Normalización 4FN**  
-> Desarrollado con **Java 21**, **Spring Boot 3.5.x**, **Spring Security 6.5 (OAuth2 Resource Server / JWT)**, **MySQL 8.4 (InnoDB, utf8mb4)** y validado mediante **ArchUnit**.
+<div align="center">
+
+![Java 21](https://img.shields.io/badge/Java-21%20LTS-007396?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.13-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring%20Security-6.5%20(JWT)-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.4%20LTS-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
+![Flyway](https://img.shields.io/badge/Flyway-11-CC0200?style=for-the-badge&logo=flyway&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose%20v2-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![ArchUnit](https://img.shields.io/badge/ArchUnit-1.4.1-orange?style=for-the-badge)
+
+<br/>
+
+**Monolito Modular · Arquitectura Hexagonal (Ports & Adapters) · Domain-Driven Design (DDD) · Normalización 4FN**
+
+### 👥 Desarrollado por:
+**Kevin Castillo** & **Daniel Gamboa**
 
 ---
 
-## 1. Descripción del Proyecto
+</div>
 
-**RentaTools** es una plataforma tecnológica diseñada para optimizar, formalizar y asegurar el alquiler de herramientas y maquinaria industrial entre propietarios de equipos (**Proveedores**) y constructores, contratistas o usuarios particulares (**Clientes**).
+## 📑 Tabla de Contenidos
 
-La plataforma resuelve los problemas más críticos del sector de alquiler:
-- **Disponibilidad física en tiempo real**: Control por fichas maestras de herramientas y números de serie físicos específicos (`ToolUnit`), evitando la sobreventa mediante bloqueos pesimistas y consultas de no solapamiento temporal.
-- **Seguridad en garantías**: Apertura, cobro, retención y devolución automática de depósitos de seguridad (`SecurityDeposit`) respaldados por transacciones auditadas.
-- **Liquidación transparente**: Facturación automatizada al confirmar la reserva (`RENTAL`) y cálculo de mora y cargos por daños al retornar los equipos (`SETTLEMENT`).
-- **Inspecciones con evidencia técnica**: Registro fotográfico y checklist de verificación en la entrega (`DELIVERY`) y devolución (`RETURN`).
+1. [Descripción General](#1-descripción-general)
+2. [Habilidades y Competencias Técnicas (Skills)](#2-habilidades-y-competencias-técnicas-skills)
+3. [Stack Tecnológico](#3-stack-tecnológico)
+4. [Esquema de Estructura y Arquitectura](#4-esquema-de-estructura-y-arquitectura)
+   - [4.1 Arquitectura Hexagonal y Monolito Modular](#41-arquitectura-hexagonal-y-monolito-modular)
+   - [4.2 Árbol de Estructura del Proyecto](#42-árbol-de-estructura-del-proyecto)
+   - [4.3 Comunicación entre Módulos y Eventos de Integración](#43-comunicación-entre-módulos-y-eventos-de-integración)
+5. [Modelos de Base de Datos: Lógico y Físico](#5-modelos-de-base-de-datos-lógico-y-físico)
+   - [5.1 Modelo Lógico (Diagrama ER Conceptual)](#51-modelo-lógico-diagrama-er-conceptual)
+   - [5.2 Modelo Físico (Esquema Relacional DDL en 4FN)](#52-modelo-físico-esquema-relacional-ddl-en-4fn)
+6. [Guía de Ejecución y Puesta en Marcha](#6-guía-de-ejecución-y-puesta-en-marcha)
+   - [6.1 Requisitos Previos](#61-requisitos-previos)
+   - [6.2 Ejecución con Docker Compose (Recomendada)](#62-ejecución-con-docker-compose-recomendada)
+   - [6.3 Ejecución Local con Maven Wrapper y MySQL](#63-ejecución-local-con-maven-wrapper-y-mysql)
+   - [6.4 Perfiles de Entorno](#64-perfiles-de-entorno)
+7. [Usuarios y Cuentas Semilla de Prueba](#7-usuarios-y-cuentas-semilla-de-prueba)
+8. [Validaciones de Seguridad y Formatos](#8-validaciones-de-seguridad-y-formatos)
+9. [Documentación de la API REST](#9-documentación-de-la-api-rest)
+10. [Pruebas Automatizadas y Calidad](#10-pruebas-automatizadas-y-calidad)
+11. [Créditos y Autores](#11-créditos-y-autores)
 
 ---
 
-## 2. Tecnologías Utilizadas
+## 1. Descripción General
 
-| Categoría | Tecnología | Versión | Descripción / Propósito |
+**RentaTools** es una plataforma SaaS industrial de alta disponibilidad orientada al alquiler profesional, seguro y formalizado de maquinaria pesada, equipos de construcción y herramientas especializadas. Conecta de manera fluida a **Proveedores** (dueños de maquinaria y empresas de alquiler) con **Clientes** (contratistas, constructores y profesionales).
+
+### Problemas Críticos que Resuelve:
+- **Disponibilidad física garantizada en tiempo real**: Control estricto a través de fichas maestras de herramientas y seriales físicos individuales (`ToolUnit`), impidiendo la sobreventa mediante bloqueos pesimistas y validación de no solapamiento temporal de fechas.
+- **Seguridad en garantías y depósitos**: Apertura, cobro, retención por daños y reembolso automatizado de depósitos de seguridad (`SecurityDeposit`) respaldados por transacciones monetarias auditadas.
+- **Facturación y liquidación transparente**: Emisión automatizada de facturas de alquiler (`RENTAL`) y facturas de liquidación final (`SETTLEMENT`) con cálculo paramétrico de días de mora y cargos técnicos por daños.
+- **Inspecciones físicas con evidencia fotográfica**: Checklists técnicos y registro de estado físico en las dos fases obligatorias: entrega en obra (`DELIVERY`) y recepción en almacén (`RETURN`).
+
+---
+
+## 2. Habilidades y Competencias Técnicas (Skills)
+
+El desarrollo del proyecto refleja dominio senior en el ecosistema empresarial **Java / Spring Boot** y arquitectura de software:
+
+* **Arquitectura de Software y DDD**:
+  - Implementación de **Monolito Modular** desacoplado por Bounded Contexts.
+  - Aplicación pura de **Arquitectura Hexagonal (Ports & Adapters)** donde el núcleo de dominio no tiene dependencias de frameworks.
+  - Fronteras arquitectónicas verificadas mediante **ArchUnit**.
+* **Spring Boot 3.5 & Java 21**:
+  - Aprovechamiento exhaustivo de **Java 21 LTS** (Records inmutables, Pattern Matching, Sealed Interfaces, Instant/LocalDate).
+  - Manejo de identificadores **UUID v7** (ordenados cronológicamente para optimizar los índices B-Tree de la BD).
+  - Configuración declarativa, inversión de control y auto-configuración de Spring Boot.
+* **Seguridad Robusta (Spring Security 6.5)**:
+  - Autenticación **Stateless** basada en tokens **JWT (Nimbus / OAuth2 Resource Server)** con par de claves y HMAC-SHA256.
+  - Autorización granular basada en roles (`CLIENTE`, `PROVEEDOR`, `ADMIN`) mediante `@PreAuthorize`.
+  - Hashing criptográfico seguro con **BCrypt** y protección contra fuerza bruta.
+* **Persistencia y Modelado Relacional (4FN)**:
+  - Diseño y normalización rigurosa de base de datos hasta la **Cuarta Forma Normal (4FN)**.
+  - Control de versiones del esquema y datos semilla con **Flyway Migrations**.
+  - Mapeo ORM con **Spring Data JPA e Hibernate 6.6+**, con control de concurrencia optimista (`@Version`).
+* **Frontend Moderno y Reactivo sin Dependencias Pesadas**:
+  - Single/Multi-Page Application construida con **HTML5 semántico**, **Vanilla JavaScript modular ES6** y **CSS3 moderno**.
+  - Validación de formularios reactiva en tiempo real con sanitización estricta (restringir solo números en teléfonos, validación de correo, longitud de contraseña y NIT).
+
+---
+
+## 3. Stack Tecnológico
+
+| Capa / Rol | Tecnología | Versión | Descripción y Propósito |
 |---|---|---|---|
-| **Lenguaje** | **Java** | **21 LTS** | Uso exhaustivo de records, pattern matching, `java.time` inmutable y UUID v7. |
-| **Framework Base** | **Spring Boot** | **3.5.x** | Inversión de control, inyección por constructor y configuración declarativa. |
-| **Seguridad** | **Spring Security** | **6.5** | Stateless, JWT HS256 Nimbus (OAuth2 Resource Server), control RBAC granular con `@PreAuthorize`. |
-| **Persistencia** | **Spring Data JPA / Hibernate** | **6.6+** | Mapeo objeto-relacional limpio contra esquema normalizado, optimistic locking con `@Version`. |
-| **Motor de Base de Datos** | **MySQL Server** | **8.4 LTS** | Motor transaccional InnoDB, `utf8mb4_0900_ai_ci`, CHECK constraints y claves foráneas estrictas. |
-| **Migraciones de BD** | **Flyway** | **11.x** | Control de versiones y evolución reproducible del esquema DDL y datos semilla. |
-| **Documentación API** | **Springdoc OpenAPI** | **2.8.x** | Swagger UI interactivo `/swagger-ui.html` y OpenAPI 3.0. |
-| **Testing de Arquitectura** | **ArchUnit** | **1.3.x** | Pruebas automáticas de pureza hexagonal y fronteras de módulos sin ciclos. |
-| **Testing de Integración** | **Testcontainers** | **1.20.x** | Instancias efímeras reales de MySQL 8.4 en Docker con `@ServiceConnection`. |
+| **Lenguaje Core** | **Java** | **21 LTS** | Uso de records, pattern matching, time API inmutable y UUID v7. |
+| **Framework Base** | **Spring Boot** | **3.5.13** | Framework empresarial para orquestación e inyección de dependencias. |
+| **Seguridad** | **Spring Security** | **6.5.x** | Autenticación stateless, JWT Bearer tokens, control RBAC estricto. |
+| **Persistencia** | **Spring Data JPA / Hibernate** | **6.6+** | ORM transaccional, bloqueos optimistas y consultas con JPQL/Criteria. |
+| **Base de Datos** | **MySQL Server** | **8.4 LTS** | Motor transaccional InnoDB, charset `utf8mb4_0900_ai_ci`, checks y FKs. |
+| **Migraciones de BD** | **Flyway** | **11.x** | Evolución controlada de DDL y scripts semilla reproducibles. |
+| **Documentación API** | **Springdoc OpenAPI** | **2.8.6** | Generación interactiva de Swagger UI (`/swagger-ui.html`) y spec OpenAPI 3. |
+| **Testing Arquitectura** | **ArchUnit** | **1.4.1** | Validación en build de la pureza hexagonal y ausencia de ciclos entre módulos. |
+| **Testing Integración** | **Testcontainers** | **1.20.x** | Pruebas automáticas contra contenedores reales de MySQL 8.4 en Docker. |
+| **Contenedores** | **Docker & Docker Compose** | **v2** | Empaquetado en contenedor Eclipse Temurin 21 multi-stage. |
+| **Frontend** | **HTML5 / CSS3 / Vanilla JS** | **ES6+** | Interfaz web industrial SaaS, dark mode, paleta HSL y Bootstrap 5.3 CDN. |
 
 ---
 
-## 3. Arquitectura y Diseño
+## 4. Esquema de Estructura y Arquitectura
 
-### 3.1 Arquitectura Hexagonal y Monolito Modular
-El sistema se organiza en módulos autónomos de negocio (*Bounded Contexts*):
+### 4.1 Arquitectura Hexagonal y Monolito Modular
+
+El sistema está estructurado como un **Monolito Modular** gobernado por **Domain-Driven Design (DDD)**. Cada Bounded Context posee aislamiento hexagonal estricto:
 
 ```
-com.rentatools/
-├── shared/           ← Kernel compartido (Money, DateRange, Actor, Ids UUID v7) y eventos de integración
-├── iam/              ← Gestión de identidad, perfiles de proveedor y sesiones JWT
-├── inventory/        ← Catálogo de herramientas, tarifas y unidades físicas
-├── rental/           ← Cotizaciones, reservas, inspecciones físicas y checklists
-└── billing/          ← Facturación (RENTAL/SETTLEMENT), cobro de garantías, pagos y reportes
+┌────────────────────────────────────────────────────────────────────────┐
+│                        INFRASTRUCTURE ADAPTERS                         │
+│  Controllers REST (@RestController)   │   JPA Entities & Repositories  │
+│  Event Listeners (@EventListener)    │   BCrypt, JWT Issuer, Storage   │
+├────────────────────────────────────────────────────────────────────────┤
+│                           APPLICATION LAYER                            │
+│  Inbound Ports (Use Cases / Commands) │   Outbound Ports (Gateways)    │
+│  Application Services Orchestrators  │   Command / Query DTOs         │
+├────────────────────────────────────────────────────────────────────────┤
+│                              DOMAIN LAYER                              │
+│       Aggregate Roots  │  Entities  │  Value Objects  │  Events        │
+│       (100% Java Puro — Cero dependencias de Spring o Jakarta)         │
+└────────────────────────────────────────────────────────────────────────┘
 ```
 
-Cada contexto sigue estrictamente las capas hexagonales:
-- **`domain`** (100% Java puro): Entidades, Raíces de Agregado (`AggregateRoot`), Value Objects inmutables, eventos y excepciones de negocio. **Prohibido importar Spring, Jakarta o Lombok**.
-- **`application`** (100% Java puro): Puertos de entrada (casos de uso) y salida (repositorios/gateways), servicios de aplicación orquestadores y DTOs de comando/consulta.
-- **`api`** (100% Java puro): Contrato público expuesto para que otros módulos consuman servicios síncronos mediante interfaces y records sin acoplamiento interno.
-- **`infrastructure`**: Adaptadores primarios (Controllers REST `@RestController`, Listeners `@EventListener`) y secundarios (JPA Entities, Repositorios Spring Data, BCrypt, JWT Issuer, Local File Storage).
+### 4.2 Árbol de Estructura del Proyecto
 
-### 3.2 Comunicación entre Módulos sin Ciclos
-- **Llamadas síncronas**: Únicamente a través de interfaces `<contexto>.api`, consumidas desde un adaptador de infraestructura que actúa como Capa Anticorrupción (ACL).
-- **Eventos de integración asíncronos/síncronos en transacción**: Definidos en `com.rentatools.shared.integration`, permitiendo que un módulo reaccione a cambios sin acoplarse:
-  - `ReservationConfirmed` $\rightarrow$ Billing emite factura RENTAL y apertura de garantía.
-  - `ReservationClearedForDelivery` $\rightarrow$ Rental cambia estado a `READY_FOR_PICKUP`.
-  - `ReservationReturned` $\rightarrow$ Billing genera borrador SETTLEMENT con cálculo de mora.
-  - `ReservationSettled` $\rightarrow$ Rental cierra la reserva en `CLOSED`.
+```text
+Proyecto_RentaHerramientas/
+├── .mvn/wrapper/                       # Binarios y propiedades de Maven Wrapper
+├── compose.yaml                        # Orquestación Docker para App + MySQL 8.4
+├── Dockerfile                          # Build multi-stage optimizado (Eclipse Temurin 21)
+├── pom.xml                             # Declaración de dependencias y plugins Maven
+│
+├── docs/                               # Documentación formal y diagramas
+│   ├── arquitectura/
+│   │   ├── DDL-4FN.md                  # Especificación formal de normalización y DDL
+│   │   └── PLAN.md                     # Bitácora y especificaciones de arquitectura
+│   ├── modelo_logico_fisico/
+│   │   ├── image.png                   # Diagrama del Modelo Lógico (ER Conceptual)
+│   │   └── Ddl.png                     # Diagrama del Modelo Físico (dbdiagram.io DDL)
+│   ├── COMPILACION.md                  # Guía detallada de compilación y empaquetado
+│   └── DESPLIEGUE.md                   # Guía de despliegue en Docker y Tomcat
+│
+├── src/main/java/com/rentatools/
+│   ├── RentaToolsApplication.java      # Clase principal con @SpringBootApplication
+│   │
+│   ├── shared/                         # Kernel compartido (Cross-Cutting & DDD Core)
+│   │   ├── domain/                     # Money, DateRange, Actor, UUID v7 Id
+│   │   ├── infrastructure/             # GlobalExceptionHandler (RFC 9457 ProblemDetail)
+│   │   └── integration/                # Eventos de integración inter-módulos
+│   │
+│   ├── iam/                            # Módulo IAM (Identidad y Accesos)
+│   │   ├── domain/                     # User, Role, ProviderProfile, RefreshToken
+│   │   ├── application/                # RegisterClient, RegisterProvider, LoginUseCase
+│   │   └── infrastructure/             # AuthController, SecurityConfig, JwtService
+│   │
+│   ├── inventory/                      # Módulo INVENTORY (Catálogo y Unidades Físicas)
+│   │   ├── domain/                     # Tool, ToolUnit, Rate, Category, ToolImage
+│   │   ├── application/                # ToolManagement, UnitTracking, SearchCatalog
+│   │   └── infrastructure/             # ToolController, ToolJpaEntity, CatalogAdapter
+│   │
+│   ├── rental/                         # Módulo RENTAL (Reservas e Inspecciones)
+│   │   ├── domain/                     # Reservation, ReservationUnit, Inspection
+│   │   ├── application/                # CreateQuote, ConfirmReservation, InspectUnit
+│   │   └── infrastructure/             # ReservationController, InspectionController
+│   │
+│   └── billing/                        # Módulo BILLING (Facturas y Garantías)
+│       ├── domain/                     # Invoice, Payment, SecurityDeposit, DamageCharge
+│       ├── application/                # GenerateInvoice, ProcessPayment, SettleDeposit
+│       └── infrastructure/             # BillingController, InvoiceJpaEntity, Reports
+│
+└── src/main/resources/
+    ├── application.yml                 # Configuración general base del sistema
+    ├── application-dev.yml             # Perfil de desarrollo (seeder y reloj simulado)
+    ├── application-prod.yml            # Perfil de producción optimizado
+    │
+    ├── db/migration/                   # Scripts Flyway reproducibles
+    │   ├── V1__create_schema.sql       # Tablas base, constraints y FKs
+    │   ├── V2__audit_triggers.sql      # Triggers y auditoría
+    │   ├── V3__indexes_and_checks.sql  # Índices funcionales y restricciones CHECK
+    │   ├── V4__foreign_keys.sql        # Claves foráneas estrictas
+    │   └── V5__seed_data.sql           # Datos semilla (usuarios, herramientas y unidades)
+    │
+    └── static/                         # Frontend Web SaaS (Client-side)
+        ├── index.html                  # Landing page de bienvenida
+        ├── catalog.html                # Catálogo público interactivo con filtros
+        ├── auth.html                   # Login y Registro dual (Cliente / Proveedor)
+        ├── admin-dashboard.html        # Panel administrativo y métricas
+        ├── provider-dashboard.html     # Panel de gestión de maquinaria del proveedor
+        ├── client-reservations.html    # Panel de seguimiento y pago de reservas
+        ├── invoice-view.html           # Visualizador e impresión de facturas
+        ├── css/styles.css              # Sistema de diseño CSS industrial oscuro
+        ├── js/                         # Lógica modular de cliente (auth.js, etc.)
+        └── images/                     # Logotipo, fondos y fotos de herramientas
+```
 
-### 3.3 Normalización en Cuarta Forma Normal (4FN)
-El esquema relacional implementado en `docs/arquitectura/DDL-4FN.md` y ejecutado por Flyway (`V1` a `V4`) respeta rigurosamente las formas normales:
-- **1FN / 2FN / 3FN**: Claves primarias claras en formato binario `BINARY(16)` optimizado para UUID v7, sin dependencias parciales ni transitivas.
-- **4FN (Eliminación de dependencias multivaluadas independientes)**: 
-  - Las tarifas por período (`DAY`, `WEEK`, `MONTH`) se desacoplan de las imágenes y de las categorías (`tool_rates`, `tool_categories`, `tool_images`).
-  - Las inspecciones desacoplan el resultado de cada punto del checklist de las fotos asociadas (`inspections`, `inspection_results`, `inspection_photos`).
-  - Los estados de las facturas no se almacenan como cadenas redundantes, sino que se derivan de marcas temporales auditadas (`issued_at`, `voided_at`).
+### 4.3 Comunicación entre Módulos y Eventos de Integración
+
+Para mantener el desacoplamiento y evitar ciclos de dependencia, los módulos se comunican de forma síncrona mediante interfaces `api` y de forma asíncrona mediante **Eventos de Dominio e Integración**:
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Cliente
+    participant Rental as Módulo Rental
+    participant Billing as Módulo Billing
+    participant Inventory as Módulo Inventory
+
+    Cliente->>Rental: Solicita Reserva (Cotización / Confirmar)
+    Rental->>Inventory: Bloqueo pesimista de unidades físicas (ToolUnit)
+    Rental->>Billing: Emite evento ReservationConfirmed
+    Billing->>Billing: Genera Factura RENTAL y Apertura de SecurityDeposit
+    Cliente->>Billing: Realiza Pago de Factura y Cobro de Garantía
+    Billing->>Rental: Emite evento ReservationClearedForDelivery
+    Note over Rental: Estado pasa a READY_FOR_PICKUP
+    Rental->>Rental: Registra Inspección DELIVERY con fotos
+    Note over Rental: Cliente opera el equipo
+    Rental->>Rental: Registra Inspección RETURN con checklist
+    Rental->>Billing: Emite evento ReservationReturned
+    Billing->>Billing: Calcula Mora y Genera Borrador SETTLEMENT
+    Billing->>Cliente: Liquida garantía (Reembolso de saldo restante)
+    Billing->>Rental: Emite evento ReservationSettled (Cierre definitivo)
+```
 
 ---
 
-## 4. Instrucciones de Clonación y Ejecución Rápida
+## 5. Modelos de Base de Datos: Lógico y Físico
 
-### 4.1 Clonar el Repositorio
-```bash
-git clone https://github.com/tu-usuario/Proyecto_RentaHerramientas.git
-cd Proyecto_RentaHerramientas
+El diseño de datos ha sido estructurado meticulosamente para garantizar la integridad referencial y cumplir con la **Cuarta Forma Normal (4FN)**, separando dependencias multivaluadas y optimizando las consultas.
+
+### 5.1 Modelo Lógico (Diagrama ER Conceptual)
+
+El modelo lógico define las entidades conceptuales del negocio y sus relaciones cardinales, desacoplando los agregados de usuarios, catálogo, reservas físicas, inspecciones y facturación:
+
+<div align="center">
+
+![Modelo Lógico ER - RentaTools](docs/modelo_logico_fisico/image.png)
+
+*Figura 1: Diagrama Entidad-Relación Lógico de RentaTools.*  
+[🔍 Ver imagen en alta resolución](docs/modelo_logico_fisico/image.png)
+
+</div>
+
+#### Diagrama de Entidades y Relaciones (Mermaid):
+
+```mermaid
+erDiagram
+    users ||--o{ user_roles : "posee"
+    roles ||--o{ user_roles : "asigna"
+    users ||--o| provider_profiles : "perfil proveedor"
+    users ||--o{ refresh_tokens : "sesiones"
+    categories ||--o{ categories : "subcategoría de"
+    users ||--o{ tools : "publica"
+    tools ||--o{ tool_categories : "clasificada en"
+    categories ||--o{ tool_categories : "agrupa"
+    tools ||--o{ tool_rates : "tarifas por período"
+    tools ||--o{ tool_images : "fotografías"
+    tools ||--o{ tool_units : "unidades físicas"
+    users ||--o{ reservations : "crea reserva"
+    reservations ||--|{ reservation_units : "alquila"
+    tool_units ||--o{ reservation_units : "asignada a"
+    reservation_units ||--o{ inspections : "inspección entrega/retorno"
+    inspections ||--o{ inspection_results : "resultado checklist"
+    checklist_items ||--o{ inspection_results : "criterio técnico"
+    inspections ||--o{ inspection_photos : "evidencia fotográfica"
+    reservations ||--o{ invoices : "factura RENTAL / SETTLEMENT"
+    invoices ||--|{ invoice_lines : "conceptos y cobros"
+    invoices ||--o{ payments : "pagos aplicados"
+    reservations ||--o| security_deposits : "garantía asociada"
+    security_deposits ||--o{ deposit_transactions : "movimientos monetarios"
+    security_deposits ||--o{ deposit_retentions : "retenciones por daño"
+    invoices ||--o{ deposit_retentions : "cargos saldados"
 ```
 
-### 4.2 Despliegue con Docker Compose (Recomendado)
-Para compilar y levantar tanto MySQL 8.4 como la aplicación en un solo comando:
+---
 
-```bash
-docker compose up -d --build
-```
+### 5.2 Modelo Físico (Esquema Relacional DDL en 4FN)
 
-El servidor estará accesible en `http://localhost:8080`.
+El modelo físico detalla la implementación exacta en **MySQL 8.4 InnoDB**, indicando tipos de datos de precisión monetaria (`DECIMAL(12,2)`), marcas de tiempo UTC (`DATETIME(6)`), claves primarias binarias ordenadas (`BINARY(16)` con **UUID v7**) y control de versiones optimista (`version BIGINT`):
 
-### 4.3 Ejecución Local con Maven Wrapper
-Si prefiere ejecutar la aplicación en su máquina local:
+<div align="center">
 
-1. **Iniciar la base de datos MySQL 8.4**:
+![Modelo Físico DDL - RentaTools](docs/modelo_logico_fisico/Ddl.png)
+
+*Figura 2: Diagrama Físico de Base de Datos generado en dbdiagram.io.*  
+[🔍 Ver imagen en alta resolución](docs/modelo_logico_fisico/Ddl.png)
+
+</div>
+
+#### Características del Diseño Físico 4FN:
+1. **Identificadores UUID v7 en `BINARY(16)`**: Permite inserciones secuenciales rápidas en el árbol B+ del índice agrupado `PRIMARY KEY`, evitando la fragmentación causada por UUIDs v4 aleatorios.
+2. **Eliminación de Dependencias Multivaluadas**:
+   - `tool_rates`, `tool_categories` y `tool_images` se encuentran completamente desacopladas de la tabla `tools`.
+   - Las inspecciones (`inspections`) separan de manera independiente los puntos evaluados del checklist (`inspection_results`) de los registros fotográficos (`inspection_photos`).
+3. **Manejo de Estados Temporales Inmutables**: Los estados de facturas y depósitos se auditan cronológicamente (`issued_at`, `voided_at`, `settled_at`) asegurando trazabilidad contable.
+
+---
+
+## 6. Guía de Ejecución y Puesta en Marcha
+
+### 6.1 Requisitos Previos
+
+| Requisito | Versión Requerida | Comprobación en Terminal |
+|---|---|---|
+| **JDK (Java Development Kit)** | **Java 21 LTS** | `java -version` |
+| **Docker & Docker Compose** | Docker v24+ / Compose v2 | `docker compose version` |
+| **Git** | 2.x | `git --version` |
+| **Navegador Web** | Chrome, Edge, Firefox moderno | — |
+
+---
+
+### 6.2 Ejecución con Docker Compose (Recomendada)
+
+Es la forma más rápida y reproducible de iniciar la plataforma, ya que compila la imagen multi-stage de Spring Boot e inicializa el contenedor de MySQL 8.4 con los volúmenes configurados:
+
+1. **Clonar el repositorio**:
+   ```bash
+   git clone https://github.com/tu-usuario/Proyecto_RentaHerramientas.git
+   cd Proyecto_RentaHerramientas
+   ```
+
+2. **Compilar y levantar todos los servicios**:
+   ```bash
+   docker compose up -d --build
+   ```
+
+3. **Verificar el estado de los contenedores**:
+   ```bash
+   docker compose ps
+   ```
+   *Debe mostrar `rentatools-mysql` en estado `healthy` y `rentatools-app` en estado `running`.*
+
+4. **Acceder a la aplicación**:
+   - 🌐 **Plataforma Web**: [http://localhost:8080](http://localhost:8080)
+   - 📚 **Documentación Swagger UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+   - 🔐 **Pantalla de Autenticación**: [http://localhost:8080/auth.html](http://localhost:8080/auth.html)
+
+5. **Detener el entorno**:
+   ```bash
+   docker compose down
+   ```
+
+---
+
+### 6.3 Ejecución Local con Maven Wrapper y MySQL
+
+Si desea ejecutar el código localmente para desarrollo y depuración:
+
+1. **Levantar únicamente el servicio de base de datos MySQL 8.4**:
    ```bash
    docker compose up -d mysql
    ```
 
-2. **Arrancar la aplicación en modo desarrollo**:
-   ```powershell
-   .\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev
-   ```
+2. **Ejecutar la aplicación Spring Boot con Maven Wrapper (perfil `dev`)**:
+   - **En Windows (PowerShell / CMD)**:
+     ```powershell
+     .\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=dev
+     ```
+   - **En Linux / macOS**:
+     ```bash
+     ./mvnw spring-boot:run -Dspring-boot.run.profiles=dev
+     ```
+
+3. **Las migraciones de Flyway se aplicarán automáticamente** al arrancar, creando el esquema completo e insertando los datos de prueba (`V1` a `V5`).
 
 ---
 
-## 5. Usuarios de Prueba Precargados (Swagger UI / Dev)
+### 6.4 Perfiles de Entorno
 
-Para probar la plataforma en **Swagger UI** (`http://localhost:8080/swagger-ui.html`) o **Postman**, se han precargado los siguientes usuarios en la migración `V5__seed_data.sql`:
+| Perfil | Archivo | Propósito y Comportamiento |
+|---|---|---|
+| `default` | `application.yml` | Configuración base del sistema, puerto `8080` y variables de conexión por defecto. |
+| `dev` | `application-dev.yml` | Modo desarrollo: habilita el reloj simulado (`/api/v1/dev/clock`) y seeder de usuarios. |
+| `prod` | `application-prod.yml` | Modo producción: compresión HTTP Gzip, logging optimizado y variables de entorno estrictas. |
+| `test` | `application-test.yml` | Modo pruebas: integración con Testcontainers e instancias efímeras de MySQL. |
 
-| Rol | Correo Electrónico | Contraseña | Descripción / Estado |
+---
+
+## 7. Usuarios y Cuentas Semilla de Prueba
+
+Para facilitar la evaluación y auditoría funcional, la base de datos incluye cuentas precargadas en `V5__seed_data.sql`:
+
+| Rol | Correo Electrónico | Contraseña | Perfil / Empresa Asociada |
 |---|---|---|---|
-| **ADMIN** | `admin@rentatools.com` | `Admin1234!` | Administrador principal del sistema |
-| **ADMIN** | `admin.dev@rentatools.com` | `Password123!` | Administrador de desarrollo |
-| **PROVEEDOR** | `proveedor1.dev@rentatools.com` | `Password123!` | Herramientas del Norte SAS (Aprobado) |
-| **PROVEEDOR** | `proveedor2.dev@rentatools.com` | `Password123!` | Equipos Industriales Sur SAS (Aprobado) |
-| **CLIENTE** | `cliente1@rentatools.com` | `Password123!` | Ana María Torres (Cliente Activo) |
-| **CLIENTE** | `cliente.dev@rentatools.com` | `Password123!` | Cliente de pruebas Dev |
+| **ADMIN** | `admin.dev@rentatools.com` | `Password123!` | Administrador de Plataforma Dev |
+| **ADMIN** | `admin@rentatools.com` | `Admin1234!` | Administrador Principal del Sistema |
+| **PROVEEDOR** | `proveedor1.dev@rentatools.com` | `Password123!` | **Herramientas del Norte SAS** (Aprobado) |
+| **PROVEEDOR** | `proveedor2.dev@rentatools.com` | `Password123!` | **Equipos Industriales Sur SAS** (Aprobado) |
+| **CLIENTE** | `cliente.dev@rentatools.com` | `Password123!` | **Carlos Gómez** (Cliente Activo) |
+| **CLIENTE** | `cliente1@rentatools.com` | `Password123!` | **Ana María Torres** (Cliente Activo) |
 
 > [!TIP]
-> Para autenticarse en Swagger UI:
-> 1. Envíe una solicitud `POST /api/v1/auth/login` con las credenciales elegidas.
-> 2. Copie el token del campo `accessToken`.
-> 3. Haga clic en el botón verde **Authorize** arriba a la derecha en Swagger UI e introduzca: `Bearer <su_access_token>`.
+> **Acceso Rápido con 1 Clic**: En la pantalla de inicio de sesión (`auth.html`), se encuentra disponible una barra interactiva de **"Cuentas de Prueba"** que autocompleta las credenciales y permite iniciar sesión de inmediato con un solo clic.
 
 ---
 
-## 6. Documentación de Endpoints REST
+## 8. Validaciones de Seguridad y Formatos
 
-La API REST responde bajo el prefijo `/api/v1` y maneja errores estandarizados bajo el formato **RFC 9457 `ProblemDetail`**.
+El sistema incorpora un robusto esquema de validación en dos capas (Frontend y Backend):
 
-### 6.1 Módulo IAM (Autenticación y Usuarios)
+### 8.1 Validaciones en el Cliente (Frontend UI/UX)
+- **Número de Teléfono (Solo Números)**:
+  - Escuchadores de eventos `input` y `paste` que impiden la escritura de letras, signos o espacios mediante regex `/\D/g`.
+  - Configuración con `inputmode="numeric"`, `pattern="[0-9]{7,15}"` y límite de 15 dígitos.
+- **Correo Electrónico**:
+  - Sanitización con eliminación de espacios y validación estricta de estructura (`usuario@dominio.ext`).
+- **Contraseña**:
+  - Validación de longitud mínima de **8 caracteres** y máximo de 72 caracteres (límite del algoritmo BCrypt).
+- **Nombres y Representantes**:
+  - Restricción contra caracteres numéricos; solo admite letras del alfabeto, tildes, diéresis, espacios y guiones.
+- **NIT / RUC**:
+  - Transformación automática a mayúsculas con caracteres alfanuméricos y guiones (5 a 20 caracteres).
+- **Feedback Visual en Tiempo Real**:
+  - Resaltado de campos con error (`.is-invalid`), mensaje descriptivo con icono (`.rt-auth-field-error`) y limpieza automática conforme el usuario realiza correcciones.
 
-#### Iniciar Sesión
-- **Ruta**: `POST /api/v1/auth/login`
-- **Permisos**: Público
-- **Cuerpo de Solicitud (JSON)**:
-  ```json
-  {
-    "email": "cliente1@rentatools.com",
-    "password": "Password123!"
-  }
-  ```
-- **Respuesta Exitosa (200 OK)**:
-  ```json
-  {
-    "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-    "refreshToken": "7c9e6679f7d04f...",
-    "tokenType": "Bearer",
-    "expiresInSeconds": 900
-  }
-  ```
-
-#### Consultar Perfil Propio
-- **Ruta**: `GET /api/v1/users/me`
-- **Permisos**: Autenticado (`CLIENTE`, `PROVEEDOR`, `ADMIN`)
-- **Cabecera**: `Authorization: Bearer <accessToken>`
-- **Respuesta Exitosa (200 OK)**:
-  ```json
-  {
-    "id": "01900000-0000-7000-8000-000000000009",
-    "email": "cliente1@rentatools.com",
-    "fullName": "Ana María Torres",
-    "phone": "+573100000001",
-    "status": "ACTIVE",
-    "roles": ["CLIENTE"]
-  }
-  ```
-
-#### Listar Usuarios (Administración)
-- **Ruta**: `GET /api/v1/admin/users?page=0&size=10&role=PROVEEDOR&status=ACTIVE`
-- **Permisos**: `ROLE_ADMIN`
-- **Respuesta Exitosa (200 OK)**:
-  ```json
-  {
-    "items": [
-      {
-        "id": "01900000-0000-7000-8000-000000000002",
-        "email": "proveedor1.dev@rentatools.com",
-        "fullName": "Proveedor Uno Dev",
-        "roles": ["PROVEEDOR"],
-        "status": "ACTIVE",
-        "providerProfile": {
-          "businessName": "Herramientas del Norte SAS",
-          "taxId": "900111222-1",
-          "approved": true
-        }
-      }
-    ],
-    "page": 0,
-    "size": 10,
-    "totalElements": 5,
-    "totalPages": 1
-  }
-  ```
+### 8.2 Validaciones en el Backend (API REST)
+- Uso de anotaciones de Jakarta Bean Validation (`@NotNull`, `@NotBlank`, `@Size`, `@Email`, `@PositiveOrZero`).
+- Manejo centralizado de excepciones con **RFC 9457 `ProblemDetail`**, devolviendo mensajes detallados por campo ante errores HTTP 400.
 
 ---
 
-### 6.2 Módulo BILLING (Facturación y Garantías)
+## 9. Documentación de la API REST
 
-#### Consultar Estado de Facturación de una Reserva
-- **Ruta**: `GET /api/v1/billing/reservations/{reservationId}`
-- **Permisos**: Partícipes de la reserva (`CLIENTE`, `PROVEEDOR` dueño) o `ADMIN`
-- **Respuesta Exitosa (200 OK)**:
-  ```json
-  {
-    "reservationId": "01900000-0000-7000-8400-000000000001",
-    "rentalInvoice": {
-      "id": "01900000-0000-7000-8600-000000000001",
-      "type": "RENTAL",
-      "number": 1,
-      "status": "ISSUED",
-      "subtotal": 100000.00,
-      "tax": 18000.00,
-      "total": 118000.00,
-      "balance": 0.00,
-      "paid": true
-    },
-    "securityDeposit": {
-      "id": "01900000-0000-7000-8900-000000000001",
-      "requiredAmount": 200000.00,
-      "totalCollected": 200000.00,
-      "totalRefunded": 0.00,
-      "totalRetained": 0.00,
-      "balance": 200000.00,
-      "settled": false
-    }
-  }
-  ```
+La API REST opera bajo el prefijo `/api/v1` y está documentada mediante la especificación OpenAPI 3.
 
-#### Registrar Pago de Factura
-- **Ruta**: `POST /api/v1/billing/invoices/{invoiceId}/payments`
-- **Permisos**: `CLIENTE` (solo método `SIMULATED`), `PROVEEDOR` y `ADMIN` (`CASH`, `CARD`, `TRANSFER`)
-- **Cuerpo de Solicitud (JSON)**:
-  ```json
-  {
-    "amount": 118000.00,
-    "method": "SIMULATED",
-    "reference": "PAY-SIM-7890"
-  }
-  ```
-- **Respuesta Exitosa (200 OK)**: Retorna la factura actualizada reflejando `balance: 0.00` y `paid: true`.
+### 9.1 Acceso a Swagger UI
+Una vez arrancada la aplicación, navegue a:  
+👉 **`http://localhost:8080/swagger-ui.html`**
 
-#### Registrar Cobro de Garantía
-- **Ruta**: `POST /api/v1/billing/reservations/{reservationId}/deposit/collections`
-- **Permisos**: `CLIENTE` (vía pasarela simulada), `PROVEEDOR` o `ADMIN`
-- **Cuerpo de Solicitud (JSON)**:
-  ```json
-  {
-    "amount": 200000.00,
-    "method": "SIMULATED",
-    "reference": "DEP-COL-3456"
-  }
-  ```
-- **Respuesta Exitosa (200 OK)**: Retorna el depósito con `fullyCollected: true` y emite el evento de autorización de entrega si el alquiler ya está saldado.
+Para autorizarse en Swagger UI:
+1. Envíe una petición `POST /api/v1/auth/login` con credenciales de prueba.
+2. Copie el token del campo `accessToken`.
+3. Haga clic en el botón verde **Authorize** e introduzca: `Bearer <accessToken>`.
 
-#### Agregar Cargo por Daño a Factura de Liquidación
-- **Ruta**: `POST /api/v1/billing/invoices/{invoiceId}/damage-charges`
-- **Permisos**: `PROVEEDOR` dueño de la herramienta o `ADMIN` (solo sobre facturas `SETTLEMENT` en estado `DRAFT`)
-- **Cuerpo de Solicitud (JSON)**:
-  ```json
-  {
-    "reservationUnitId": "01900000-0000-7000-8500-000000000016",
-    "description": "Reparación de cable de alimentación cortado",
-    "amount": 40000.00
-  }
-  ```
+### 9.2 Endpoints Clave del Sistema
 
-#### Liquidar Definitivamente Reserva y Garantía
-- **Ruta**: `POST /api/v1/billing/reservations/{reservationId}/settle`
-- **Permisos**: `PROVEEDOR` dueño o `ADMIN`
-- **Cuerpo de Solicitud (JSON)**:
-  ```json
-  {
-    "refundMethod": "SIMULATED",
-    "refundReference": "REF-DEPOSIT-9901"
-  }
-  ```
-- **Respuesta Exitosa (200 OK)**: Emite la factura `SETTLEMENT`, deduce la retención de la garantía, procesa la devolución del remanente al cliente y emite `ReservationSettled`.
+```text
+AUTENTICACIÓN & USUARIOS (IAM)
+├── POST /api/v1/auth/login                      -> Iniciar sesión y obtener JWT
+├── POST /api/v1/auth/register/client            -> Registro público de cuenta Cliente
+├── POST /api/v1/auth/register/provider          -> Registro de Proveedor (requiere aprobación)
+├── GET  /api/v1/users/me                        -> Perfil del usuario autenticado
+└── GET  /api/v1/admin/users                     -> Listado y aprobación de usuarios (ADMIN)
 
-#### Reporte Financiero de Ingresos (Administración)
-- **Ruta**: `GET /api/v1/admin/reports/revenue?from=2026-06-01T00:00:00Z&to=2026-06-30T23:59:59Z`
-- **Permisos**: `ROLE_ADMIN`
-- **Respuesta Exitosa (200 OK)**:
-  ```json
-  {
-    "totalInvoiced": 3156200.00,
-    "totalCollected": 3156200.00,
-    "depositsRetained": 284360.00,
-    "depositsRefunded": 463560.00,
-    "breakdownByPaymentMethod": {
-      "SIMULATED": 1250000.00,
-      "CARD": 850000.00,
-      "TRANSFER": 756200.00,
-      "CASH": 300000.00
-    }
-  }
-  ```
+CATÁLOGO & INVENTARIO (INVENTORY)
+├── GET  /api/v1/tools                           -> Catálogo público con filtros y paginación
+├── GET  /api/v1/tools/{id}                      -> Detalle de herramienta, tarifas e imágenes
+├── POST /api/v1/tools                           -> Publicar nueva maquinaria (PROVEEDOR)
+└── GET  /api/v1/tools/{id}/units                -> Gestión de seriales físicos y estado
 
----
+RESERVAS E INSPECCIONES (RENTAL)
+├── POST /api/v1/rental/quotes                   -> Cotizar alquiler según fechas y tarifas
+├── POST /api/v1/rental/reservations             -> Crear y confirmar reserva con bloqueo físico
+├── GET  /api/v1/rental/reservations/me          -> Historial de reservas del cliente
+└── POST /api/v1/rental/inspections              -> Registrar inspección DELIVERY o RETURN
 
-## 7. Pruebas Automatizadas
-
-Para validar que todo el código cumple con los estándares arquitectónicos y de integración:
-
-```powershell
-# Ejecutar todas las pruebas unitarias y de integración
-.\mvnw.cmd test
+FACTURACIÓN Y GARANTÍAS (BILLING)
+├── GET  /api/v1/billing/reservations/{id}       -> Estado de factura RENTAL y depósito
+├── POST /api/v1/billing/invoices/{id}/payments  -> Registrar pago de factura
+├── POST /api/v1/billing/reservations/{id}/deposit/collections -> Registrar cobro de garantía
+├── POST /api/v1/billing/reservations/{id}/settle -> Liquidar reserva y reembolsar garantía
+└── GET  /api/v1/admin/reports/revenue           -> Reporte consolidado de ingresos (ADMIN)
 ```
 
-Para documentación detallada de compilación y perfiles, consulte [docs/COMPILACION.md](file:///c:/Users/kevic/java_proyectos/proyecto_springbot/Proyecto_RentaHerramientas/docs/COMPILACION.md).  
-Para procedimientos de despliegue en contenedores o Tomcat nativo, consulte [docs/DESPLIEGUE.md](file:///c:/Users/kevic/java_proyectos/proyecto_springbot/Proyecto_RentaHerramientas/docs/DESPLIEGUE.md).
+---
+
+## 10. Pruebas Automatizadas y Calidad
+
+El proyecto dispone de una suite de pruebas estructurada para garantizar la robustez del código:
+
+### Ejecución de Pruebas Unitarias y de Integración:
+```powershell
+# En Windows
+.\mvnw.cmd test
+
+# En Linux / macOS
+./mvnw test
+```
+
+### Tipos de Pruebas Incluidas:
+1. **Pruebas de Arquitectura (ArchUnit)**:
+   - Verifican que la capa de dominio permanezca 100% aislada de frameworks externos.
+   - Comprueban la ausencia de dependencias circulares entre los Bounded Contexts.
+2. **Pruebas de Integración (Testcontainers)**:
+   - Ejecutan pruebas contra una instancia real de MySQL 8.4 levantada dinámicamente en contenedor Docker.
+3. **Pruebas de Seguridad y Control de Acceso (Spring Security Test)**:
+   - Verifican la denegación de accesos no autorizados (HTTP 401 y 403) ante rutas protegidas por roles.
+
+---
+
+## 11. Créditos y Autores
+
+Proyecto desarrollado como solución integral de ingeniería de software por:
+
+* **Kevin Castillo**
+* **Daniel Gamboa**
+
+---
+
+<div align="center">
+
+*RentaTools — Alquila, construye, avanza.*  
+© 2026 RentaTools Inc. Todos los derechos reservados.
+
+</div>
