@@ -10,6 +10,7 @@ import {
     showProblemAlert,
     showSuccessToast
 } from './auth.js';
+import { getToolImageUrl } from './catalog.js';
 
 const DEFAULT_CHECKLIST_ITEMS = [
     { id: 1, code: 'CARCASA', label: 'Carcasa / estructura sin golpes ni fisuras', active: true },
@@ -302,19 +303,15 @@ function renderProviderToolsGrid() {
 
     grid.innerHTML = state.tools.map(tool => {
         const rates = tool.rates || {};
-        const coverImg = tool.images?.[0]?.url || null;
+        const toolImgUrl = getToolImageUrl(tool);
         const canPublish = tool.status !== 'ACTIVE';
         const canDeactivate = tool.status === 'ACTIVE';
 
         return `
             <div class="col">
-                <article class="card rt-card h-100 d-flex flex-column">
-                    <div class="rt-tool-img-wrapper">
-                        ${coverImg
-                            ? `<img src="${escapeHtml(coverImg)}" alt="${escapeHtml(tool.name)}"
-                                    onerror="this.outerHTML='<i class=\\'bi bi-tools rt-tool-placeholder\\'></i>'">`
-                            : `<i class="bi bi-tools rt-tool-placeholder"></i>`
-                        }
+                <article class="card rt-card group h-100 d-flex flex-column">
+                    <div class="relative w-full h-48 bg-slate-950 flex items-center justify-center overflow-hidden border-b border-slate-800 p-2">
+                        <img src="${toolImgUrl}" alt="${escapeHtml(tool.name)}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.src='/images/tools/fallback-equipment.png';" />
                         <span class="position-absolute top-0 start-0 m-2 badge badge-tool-${escapeHtml(tool.status)}">
                             ${escapeHtml(tool.status)}
                         </span>

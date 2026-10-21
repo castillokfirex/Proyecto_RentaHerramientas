@@ -25,6 +25,42 @@ const state = {
     quoteModalInstance: null
 };
 
+/**
+ * Obtiene la URL de la imagen de una herramienta.
+ * Si tool.imageUrl viene definida en el DTO la usa, de lo contrario genera el slug a partir del nombre.
+ * Si falla o no está disponible, cae en fallback-equipment.png.
+ */
+export function getToolImageUrl(tool) {
+    if (!tool) return '/images/tools/fallback-equipment.png';
+    if (typeof tool === 'string') {
+        const slug = tool.toLowerCase()
+            .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+            .replace(/[^a-z0-9]+/g, "-")
+            .replace(/^-+|-+$/g, "");
+        return slug ? `/images/tools/${slug}.png` : '/images/tools/fallback-equipment.png';
+    }
+    if (tool.imageUrl && typeof tool.imageUrl === 'string' && tool.imageUrl.trim()) {
+        return tool.imageUrl.trim();
+    }
+    if (tool.coverImageUrl && typeof tool.coverImageUrl === 'string' && tool.coverImageUrl.trim()) {
+        return tool.coverImageUrl.trim();
+    }
+    if (Array.isArray(tool.images) && tool.images[0]?.url) {
+        return tool.images[0].url.trim();
+    }
+    const name = tool.name || '';
+    const slug = name.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quita tildes
+        .replace(/[^a-z0-9]+/g, "-")                      // reemplaza no-alfanuméricos por guiones
+        .replace(/^-+|-+$/g, "");                         // quita guiones en extremos
+    return slug ? `/images/tools/${slug}.png` : '/images/tools/fallback-equipment.png';
+}
+
+if (typeof window !== 'undefined') {
+    window.getToolImageUrl = getToolImageUrl;
+}
+
+
 document.addEventListener('DOMContentLoaded', async () => {
     renderNavbar('catalog');
 
@@ -462,26 +498,13 @@ function renderToolsGrid(items) {
             .join(' ');
 
         const availCount = tool.availableUnitsCount ?? detail?.availableUnitsCount ?? 0;
-
-        const placeholderHtml = `
-            <div class="rt-tool-placeholder-box">
-                <div class="rt-tool-placeholder-grid"></div>
-                <div class="rt-tool-placeholder-icon-circle">
-                    <i class="bi bi-tools"></i>
-                </div>
-                <span class="rt-tool-placeholder-label">Equipo Certificado RT</span>
-            </div>
-        `;
+        const toolImgUrl = getToolImageUrl(detail ? { ...detail, ...tool } : tool);
 
         return `
             <div class="col">
-                <article class="card rt-card h-100 d-flex flex-column">
-                    <div class="rt-tool-img-wrapper">
-                        ${coverUrl
-                            ? `<img src="${escapeHtml(coverUrl)}" alt="${escapeHtml(tool.name)}" loading="lazy"
-                                    onerror="this.parentElement.innerHTML=\`${placeholderHtml.replace(/"/g, '&quot;')}\`">`
-                            : placeholderHtml
-                        }
+                <article class="card rt-card group h-100 d-flex flex-column">
+                    <div class="relative w-full h-48 bg-slate-950 flex items-center justify-center overflow-hidden border-b border-slate-800 p-2">
+                        <img src="${toolImgUrl}" alt="${escapeHtml(tool.name)}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.src='/images/tools/fallback-equipment.png';" />
                         <span class="position-absolute top-0 end-0 m-2 rt-avail-badge ${availCount > 0 ? 'bg-success text-white' : 'bg-secondary text-white'}">
                             ${availCount > 0 ? '<span class="rt-dot-pulse"></span>' : '<i class="bi bi-x-circle me-1"></i>'}
                             ${availCount} disp.
@@ -607,7 +630,11 @@ function openQuoteModal(toolId) {
     const monthRate = rates.MONTH ?? null;
 
     const summaryContainer = document.getElementById('quoteToolSummary');
+    const modalImgUrl = getToolImageUrl(tool);
     summaryContainer.innerHTML = `
+        <div class="relative w-full h-36 bg-slate-950 flex items-center justify-center overflow-hidden rounded-3 mb-3 border border-slate-800 p-2">
+            <img src="${modalImgUrl}" alt="${escapeHtml(tool.name)}" class="max-h-full max-w-full object-contain" onerror="this.onerror=null; this.src='/images/tools/fallback-equipment.png';" />
+        </div>
         <h4 class="h6 fw-bold mb-1">${escapeHtml(tool.name)}</h4>
         <p class="small text-muted mb-2">
             ${escapeHtml(tool.brand || 'Genérico')} ${tool.model ? `· ${escapeHtml(tool.model)}` : ''}

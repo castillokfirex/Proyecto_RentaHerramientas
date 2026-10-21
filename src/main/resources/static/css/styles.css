@@ -295,6 +295,34 @@ body {
     border-color: rgba(245, 158, 11, 0.45);
 }
 
+/* ==========================================================================
+   Tailwind Utilities (Equipment Card Image Grid & Tool Images)
+   ========================================================================== */
+.relative { position: relative; }
+.w-full { width: 100%; }
+.h-48 { height: 12rem !important; }
+.h-36 { height: 9rem !important; }
+.bg-slate-950 { background-color: #020617 !important; }
+.border-slate-800 { border-color: #1e293b !important; }
+.border-b { border-bottom-width: 1px !important; border-bottom-style: solid !important; }
+.flex { display: flex !important; }
+.items-center { align-items: center !important; }
+.justify-center { justify-content: center !important; }
+.overflow-hidden { overflow: hidden !important; }
+.p-2 { padding: 0.5rem !important; }
+.max-h-full { max-height: 100% !important; }
+.max-w-full { max-width: 100% !important; }
+.object-contain { object-fit: contain !important; }
+.group { position: relative; }
+.transition-transform { transition-property: transform !important; }
+.duration-300 { transition-duration: 300ms !important; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important; }
+.group:hover .group-hover\:scale-105 { transform: scale(1.05) !important; }
+
+.rt-card .relative.h-48 {
+    border-top-left-radius: calc(var(--rt-radius-md) - 1px);
+    border-top-right-radius: calc(var(--rt-radius-md) - 1px);
+}
+
 /* Tool Image Container & Tech Blueprint Placeholder */
 .rt-tool-img-wrapper {
     height: 195px;
