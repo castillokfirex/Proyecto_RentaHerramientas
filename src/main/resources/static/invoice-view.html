@@ -19,56 +19,141 @@
     <!-- Contenedor de Alertas ProblemDetail (RFC 9457) -->
     <div id="rt-alert-container" class="d-print-none" aria-live="polite"></div>
 
-    <!-- Barra Superior de Búsqueda y Selección de Reserva / Factura (Oculta al imprimir) -->
-    <section class="bg-white border-bottom py-3 d-print-none">
-        <div class="container">
-            <div class="row align-items-center g-2">
-                <div class="col-lg-5">
-                    <div class="d-flex align-items-center gap-2">
-                        <label for="quickReservationSelect" class="small fw-semibold text-nowrap mb-0">
-                            <i class="bi bi-calendar2-check text-warning me-1"></i>Mis Reservas:
-                        </label>
-                        <select id="quickReservationSelect" class="form-select form-select-sm">
-                            <option value="">Selecciona una reserva con facturación...</option>
+    <!-- Hero de Facturación (Oculto al imprimir) -->
+    <section class="rt-inv-hero py-4 d-print-none">
+        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <div>
+                <span class="rt-inv-badge-category">
+                    <i class="bi bi-receipt-cutoff me-1"></i> GESTIÓN DE FACTURACIÓN
+                </span>
+                <h1 class="h2 fw-bold text-dark mt-2 mb-1">Facturación y pagos</h1>
+                <p class="text-muted small mb-0">Consulta facturas, registra pagos y gestiona garantías de reservas.</p>
+            </div>
+            <div class="rt-inv-hero-graphic d-none d-md-flex align-items-center">
+                <div class="rt-inv-graphic-card">
+                    <i class="bi bi-receipt fs-2 text-dark"></i>
+                    <i class="bi bi-wrench-adjustable text-warning fs-3 ms-2"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tarjetas KPI Resumen Financiero (Ocultas al imprimir) -->
+    <section class="container mb-4 d-print-none">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-3">
+            <div class="col">
+                <div class="card rt-card rt-inv-kpi-card p-3 h-100">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rt-inv-kpi-icon rt-inv-kpi-blue">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <div>
+                            <span class="rt-inv-kpi-label">Facturado</span>
+                            <h3 class="rt-inv-kpi-value text-dark mb-0" id="kpiFacturado">S/ 0.00</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card rt-card rt-inv-kpi-card p-3 h-100 rt-kpi-border-green">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rt-inv-kpi-icon rt-inv-kpi-green">
+                            <i class="bi bi-wallet2"></i>
+                        </div>
+                        <div>
+                            <span class="rt-inv-kpi-label">Pagado</span>
+                            <h3 class="rt-inv-kpi-value text-dark mb-0" id="kpiPagado">S/ 0.00</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card rt-card rt-inv-kpi-card p-3 h-100 rt-kpi-border-amber">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rt-inv-kpi-icon rt-inv-kpi-amber">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <div>
+                            <span class="rt-inv-kpi-label">Saldo pendiente</span>
+                            <h3 class="rt-inv-kpi-value text-dark mb-0" id="kpiSaldo">S/ 0.00</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card rt-card rt-inv-kpi-card p-3 h-100 rt-kpi-border-purple">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="rt-inv-kpi-icon rt-inv-kpi-purple">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <div>
+                            <span class="rt-inv-kpi-label">Garantías en custodia</span>
+                            <h3 class="rt-inv-kpi-value text-dark mb-0" id="kpiGarantia">S/ 0.00</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tarjeta de Consulta de Facturas (Oculta al imprimir) -->
+    <section class="container mb-4 d-print-none">
+        <div class="card rt-card rt-inv-search-card p-3 p-md-4">
+            <div class="d-flex align-items-center gap-2 mb-3">
+                <i class="bi bi-search text-dark fs-5"></i>
+                <div>
+                    <h2 class="h6 fw-bold mb-0 text-dark">Consultar factura</h2>
+                    <p class="text-muted small mb-0">Busca una factura por reserva, UUID o número de factura.</p>
+                </div>
+            </div>
+            <div class="row g-2 align-items-center">
+                <div class="col-lg-3 col-md-6">
+                    <div class="input-group input-group-sm rt-inv-input-group">
+                        <span class="input-group-text bg-light text-muted fw-semibold border-end-0">Reserva</span>
+                        <select id="quickReservationSelect" class="form-select border-start-0">
+                            <option value="">Selecciona una reserva...</option>
                         </select>
                     </div>
                 </div>
-                <div class="col-lg-5">
-                    <form id="lookupBillingForm" class="input-group input-group-sm">
-                        <select id="lookupTypeSelect" class="form-select" style="max-width: 145px;">
-                            <option value="reservation">ID Reserva</option>
-                            <option value="invoice">ID Factura</option>
-                        </select>
-                        <input type="text" id="lookupIdInput" class="form-control font-monospace"
-                               placeholder="UUID de reserva o factura...">
-                        <button type="submit" class="btn btn-dark">
-                            <i class="bi bi-search me-1"></i>Consultar
+                <div class="col-lg-6 col-md-6">
+                    <form id="lookupBillingForm" class="d-flex gap-2">
+                        <div class="input-group input-group-sm rt-inv-input-group flex-grow-1">
+                            <select id="lookupTypeSelect" class="form-select" style="max-width: 140px;">
+                                <option value="reservation">ID de reserva</option>
+                                <option value="invoice">ID de factura</option>
+                            </select>
+                            <input type="text" id="lookupIdInput" class="form-control font-monospace"
+                                   placeholder="UUID de reserva o factura...">
+                        </div>
+                        <button type="submit" class="btn btn-dark btn-sm px-3 fw-semibold text-nowrap d-flex align-items-center gap-1 rt-inv-btn-query">
+                            <i class="bi bi-search"></i>
+                            <span>Consultar</span>
                         </button>
                     </form>
                 </div>
-                <div class="col-lg-2 text-lg-end">
-                    <button type="button" id="printInvoiceBtn" class="btn btn-outline-dark btn-sm w-100">
-                        <i class="bi bi-printer me-1"></i>Imprimir / PDF
+                <div class="col-lg-3 col-md-12 text-lg-end">
+                    <button type="button" id="printInvoiceBtn" class="btn btn-outline-dark btn-sm px-3 fw-semibold w-100 d-flex align-items-center justify-content-center gap-2 rt-inv-btn-print">
+                        <i class="bi bi-printer"></i>
+                        <span>Imprimir / PDF</span>
                     </button>
                 </div>
             </div>
         </div>
     </section>
 
-    <main class="container my-4 flex-grow-1">
+    <main class="container my-3 flex-grow-1">
         <!-- Selector entre Factura de Alquiler (RENTAL) y Liquidación (SETTLEMENT) -->
-        <div id="invoiceSwitchBar" class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 d-none d-print-none">
-            <div class="btn-group btn-group-sm" role="group" aria-label="Tipo de comprobante">
+        <div id="invoiceSwitchBar" class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2 d-none d-print-none rt-inv-tabs-bar">
+            <div class="btn-group btn-group-sm rt-inv-btn-group" role="group" aria-label="Tipo de comprobante">
                 <button type="button" id="btnShowRentalInvoice" class="btn btn-dark active">
                     <i class="bi bi-file-earmark-text me-1"></i>Factura de Alquiler (RENTAL)
                 </button>
                 <button type="button" id="btnShowSettlementInvoice" class="btn btn-outline-dark">
-                    <i class="bi bi-file-earmark-Diff me-1"></i>Factura de Liquidación (SETTLEMENT)
+                    <i class="bi bi-file-earmark-diff me-1"></i>Factura de Liquidación (SETTLEMENT)
                 </button>
             </div>
-            <span id="reservationStatusQuickNote" class="small text-muted"></span>
+            <span id="reservationStatusQuickNote" class="small text-muted fw-semibold"></span>
         </div>
-
         <div class="row g-4">
             <!-- HOJA IMPRIMIBLE DE LA FACTURA -->
             <div class="col-lg-8">
