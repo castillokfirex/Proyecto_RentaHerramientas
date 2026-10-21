@@ -146,6 +146,25 @@ function bindEvents() {
     if (confirmReservationBtn) {
         confirmReservationBtn.addEventListener('click', () => submitDirectReservation());
     }
+
+    const loginToReserveBtn = document.getElementById('loginToReserveBtn');
+    if (loginToReserveBtn) {
+        loginToReserveBtn.addEventListener('click', () => {
+            // Cerrar el modal de cotización limpiamente para que no choquen los backdrops
+            if (state.quoteModalInstance) {
+                state.quoteModalInstance.hide();
+            }
+            setTimeout(() => {
+                const quickAuthEl = document.getElementById('rtQuickAuthModal');
+                if (quickAuthEl && window.bootstrap) {
+                    const quickAuthModal = window.bootstrap.Modal.getOrCreateInstance(quickAuthEl);
+                    quickAuthModal.show();
+                } else {
+                    window.location.href = 'auth.html';
+                }
+            }, 300);
+        });
+    }
 }
 
 async function loadCategories() {
@@ -217,6 +236,10 @@ function renderCategoryTree() {
             state.selectedCategoryId = catId;
             state.page = 0;
             renderCategoryTree();
+            const toolsSection = document.getElementById('toolsSection') || document.getElementById('toolsGrid');
+            if (toolsSection) {
+                toolsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
             loadCatalogTools();
         });
     });
@@ -232,13 +255,41 @@ function renderCategoryTree() {
     }
 }
 
+function renderSkeletonGrid(gridEl) {
+    if (!gridEl) return;
+    let skeletonHtml = '';
+    for (let i = 0; i < 6; i++) {
+        skeletonHtml += `
+            <div class="col">
+                <div class="card rt-card h-100 p-0 overflow-hidden">
+                    <div class="rt-skeleton" style="height: 195px; width: 100%;"></div>
+                    <div class="card-body p-3">
+                        <div class="rt-skeleton mb-2" style="height: 14px; width: 35%;"></div>
+                        <div class="rt-skeleton mb-2" style="height: 20px; width: 80%;"></div>
+                        <div class="rt-skeleton mb-3" style="height: 14px; width: 55%;"></div>
+                        <div class="row g-1 mb-3">
+                            <div class="col-4"><div class="rt-skeleton" style="height: 44px;"></div></div>
+                            <div class="col-4"><div class="rt-skeleton" style="height: 44px;"></div></div>
+                            <div class="col-4"><div class="rt-skeleton" style="height: 44px;"></div></div>
+                        </div>
+                        <div class="rt-skeleton" style="height: 34px; width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    gridEl.innerHTML = skeletonHtml;
+}
+
 async function loadCatalogTools() {
     const loadingEl = document.getElementById('catalogLoading');
     const gridEl = document.getElementById('toolsGrid');
     const totalCountEl = document.getElementById('catalogTotalCount');
 
     if (loadingEl) loadingEl.classList.remove('d-none');
-    if (gridEl) gridEl.innerHTML = '';
+    if (gridEl && !gridEl.children.length) {
+        renderSkeletonGrid(gridEl);
+    }
 
     try {
         const params = new URLSearchParams();
@@ -331,22 +382,33 @@ function renderToolsGrid(items) {
 
         const availCount = tool.availableUnitsCount ?? detail?.availableUnitsCount ?? 0;
 
+        const placeholderHtml = `
+            <div class="rt-tool-placeholder-box">
+                <div class="rt-tool-placeholder-grid"></div>
+                <div class="rt-tool-placeholder-icon-circle">
+                    <i class="bi bi-tools"></i>
+                </div>
+                <span class="rt-tool-placeholder-label">Equipo Certificado RT</span>
+            </div>
+        `;
+
         return `
             <div class="col">
                 <article class="card rt-card h-100 d-flex flex-column">
                     <div class="rt-tool-img-wrapper">
                         ${coverUrl
                             ? `<img src="${escapeHtml(coverUrl)}" alt="${escapeHtml(tool.name)}" loading="lazy"
-                                    onerror="this.outerHTML='<i class=\\'bi bi-tools rt-tool-placeholder\\'></i>'">`
-                            : `<i class="bi bi-tools rt-tool-placeholder"></i>`
+                                    onerror="this.parentElement.innerHTML=\`${placeholderHtml.replace(/"/g, '&quot;')}\`">`
+                            : placeholderHtml
                         }
-                        <span class="position-absolute top-0 end-0 m-2 badge ${availCount > 0 ? 'bg-success' : 'bg-secondary'}">
-                            <i class="bi bi-box-seam me-1"></i>${availCount} disp.
+                        <span class="position-absolute top-0 end-0 m-2 rt-avail-badge ${availCount > 0 ? 'bg-success text-white' : 'bg-secondary text-white'}">
+                            ${availCount > 0 ? '<span class="rt-dot-pulse"></span>' : '<i class="bi bi-x-circle me-1"></i>'}
+                            ${availCount} disp.
                         </span>
                     </div>
 
                     <div class="card-body d-flex flex-column flex-grow-1">
-                        <div class="d-flex flex-wrap gap-1 mb-1">
+                        <div class="d-flex flex-wrap gap-1 mb-2">
                             ${catBadges}
                         </div>
                         <h3 class="h6 fw-bold mb-1">${escapeHtml(tool.name)}</h3>
@@ -372,19 +434,19 @@ function renderToolsGrid(items) {
                             <div class="col-4">
                                 <div class="rt-rate-box">
                                     <span class="rt-rate-label">Semana</span>
-                                    <span class="rt-rate-val">${weekRate != null ? formatMoney(weekRate) : '—'}</span>
+                                    <span class="rt-rate-val">${weekRate != null ? formatMoney(weekRate) : 'Semanal'}</span>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="rt-rate-box">
                                     <span class="rt-rate-label">Mes</span>
-                                    <span class="rt-rate-val">${monthRate != null ? formatMoney(monthRate) : '—'}</span>
+                                    <span class="rt-rate-val">${monthRate != null ? formatMoney(monthRate) : 'Mensual'}</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="d-flex justify-content-between align-items-center small text-muted border-top pt-2 mb-3">
-                            <span><i class="bi bi-shield-check text-warning me-1"></i>Garantía por unidad:</span>
+                            <span><i class="bi bi-shield-check text-warning me-1"></i>Garantía:</span>
                             <strong class="text-dark">${formatMoney(tool.depositAmount)}</strong>
                         </div>
 
@@ -430,6 +492,10 @@ function renderPagination(pageResult) {
     ul.querySelectorAll('[data-page]').forEach(btn => {
         btn.addEventListener('click', () => {
             state.page = Number(btn.getAttribute('data-page'));
+            const toolsSection = document.getElementById('toolsSection') || document.getElementById('toolsGrid');
+            if (toolsSection) {
+                toolsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
             loadCatalogTools();
         });
     });
