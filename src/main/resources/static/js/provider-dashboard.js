@@ -138,10 +138,26 @@ function bindEvents() {
     const inspUnitSelect = document.getElementById('inspUnitSelect');
     const inspTypeSelect = document.getElementById('inspTypeSelect');
     const simDateInput = document.getElementById('simulatedReturnDate');
+    const unitAcquiredDate = document.getElementById('unitAcquiredDate');
+    const today = new Date();
+    const todayIso = today.toISOString().substring(0, 10);
 
     if (simDateInput) {
-        simDateInput.value = new Date().toISOString().substring(0, 10);
+        const minPast = new Date(today);
+        minPast.setDate(today.getDate() - 30);
+        const maxFuture = new Date(today);
+        maxFuture.setDate(today.getDate() + 90);
+
+        simDateInput.min = minPast.toISOString().substring(0, 10);
+        simDateInput.max = maxFuture.toISOString().substring(0, 10);
+        simDateInput.value = todayIso;
         simDateInput.addEventListener('change', () => updateVisualLateFee());
+    }
+
+    if (unitAcquiredDate) {
+        unitAcquiredDate.max = todayIso;
+        unitAcquiredDate.min = '2010-01-01';
+        unitAcquiredDate.value = todayIso;
     }
 
     if (inspResSelect) {

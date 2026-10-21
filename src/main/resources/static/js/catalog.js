@@ -42,23 +42,72 @@ document.addEventListener('DOMContentLoaded', async () => {
     ]);
 });
 
+const MAX_ADVANCE_RESERVATION_DAYS = 90; // Máximo 3 meses de anticipación
+const MAX_CONTINUOUS_RENTAL_DAYS = 90;   // Máximo 3 meses de duración de alquiler continuo
+
 function initDefaultDates() {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const plusTwo = new Date(today);
     plusTwo.setDate(today.getDate() + 2);
 
+    const maxAdvance = new Date(today);
+    maxAdvance.setDate(today.getDate() + MAX_ADVANCE_RESERVATION_DAYS);
+
+    const maxRental = new Date(plusTwo);
+    maxRental.setDate(plusTwo.getDate() + MAX_CONTINUOUS_RENTAL_DAYS);
+
     const todayIso = toIsoDate(today);
     const plusTwoIso = toIsoDate(plusTwo);
+    const maxAdvanceIso = toIsoDate(maxAdvance);
+    const maxRentalIso = toIsoDate(maxRental);
 
     const quoteStart = document.getElementById('quoteStartDate');
     const quoteEnd = document.getElementById('quoteEndDate');
     if (quoteStart) {
         quoteStart.min = todayIso;
+        quoteStart.max = maxAdvanceIso;
         quoteStart.value = todayIso;
     }
     if (quoteEnd) {
         quoteEnd.min = todayIso;
+        quoteEnd.max = maxRentalIso;
         quoteEnd.value = plusTwoIso;
+    }
+
+    // Filtros de barra lateral
+    const filterStart = document.getElementById('filterStartDate');
+    const filterEnd = document.getElementById('filterEndDate');
+    if (filterStart) {
+        filterStart.min = todayIso;
+        filterStart.max = maxAdvanceIso;
+    }
+    if (filterEnd) {
+        filterEnd.min = todayIso;
+        filterEnd.max = toIsoDate(new Date(today.getTime() + 180 * 86400000));
+    }
+}
+
+function syncQuoteEndDateBounds() {
+    const quoteStart = document.getElementById('quoteStartDate');
+    const quoteEnd = document.getElementById('quoteEndDate');
+    if (!quoteStart || !quoteEnd || !quoteStart.value) return;
+
+    quoteEnd.min = quoteStart.value;
+
+    const startObj = new Date(quoteStart.value + 'T00:00:00');
+    if (!isNaN(startObj.getTime())) {
+        const maxEnd = new Date(startObj);
+        maxEnd.setDate(startObj.getDate() + MAX_CONTINUOUS_RENTAL_DAYS);
+        quoteEnd.max = toIsoDate(maxEnd);
+
+        if (quoteEnd.value && quoteEnd.value < quoteStart.value) {
+            quoteEnd.value = quoteStart.value;
+        }
+        if (quoteEnd.value && quoteEnd.value > quoteEnd.max) {
+            quoteEnd.value = quoteEnd.max;
+        }
     }
 }
 
@@ -133,13 +182,45 @@ function bindEvents() {
     const quoteQuantity = document.getElementById('quoteQuantity');
     const recalcQuoteBtn = document.getElementById('recalcQuoteBtn');
 
-    [quoteStartDate, quoteEndDate, quoteQuantity].forEach(input => {
-        if (input) {
-            input.addEventListener('change', () => triggerRealtimeQuote());
-        }
-    });
+    if (quoteStartDate) {
+        ['input', 'change'].forEach(evt => {
+            quoteStartDate.addEventListener(evt, () => {
+                syncQuoteEndDateBounds();
+                triggerRealtimeQuote();
+            });
+        });
+    }
+
+    if (quoteEndDate) {
+        ['input', 'change'].forEach(evt => {
+            quoteEndDate.addEventListener(evt, () => triggerRealtimeQuote());
+        });
+    }
+
+    if (quoteQuantity) {
+        ['input', 'change'].forEach(evt => {
+            quoteQuantity.addEventListener(evt, () => triggerRealtimeQuote());
+        });
+    }
+
     if (recalcQuoteBtn) {
         recalcQuoteBtn.addEventListener('click', () => triggerRealtimeQuote());
+    }
+
+    const filterStartDate = document.getElementById('filterStartDate');
+    const filterEndDate = document.getElementById('filterEndDate');
+    if (filterStartDate && filterEndDate) {
+        filterStartDate.addEventListener('change', () => {
+            if (filterStartDate.value) {
+                filterEndDate.min = filterStartDate.value;
+                const fStart = new Date(filterStartDate.value + 'T00:00:00');
+                if (!isNaN(fStart.getTime())) {
+                    const fMax = new Date(fStart);
+                    fMax.setDate(fStart.getDate() + 90);
+                    filterEndDate.max = toIsoDate(fMax);
+                }
+            }
+        });
     }
 
     const confirmReservationBtn = document.getElementById('confirmReservationBtn');
@@ -557,6 +638,7 @@ function openQuoteModal(toolId) {
     `;
 
     updateModalAuthButtons();
+    syncQuoteEndDateBounds();
     if (state.quoteModalInstance) {
         state.quoteModalInstance.show();
     }
@@ -594,10 +676,32 @@ async function triggerRealtimeQuote() {
         return;
     }
 
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayIso = toIsoDate(today);
+
+    if (startDate < todayIso) {
+        badge.className = 'badge bg-danger';
+        badge.textContent = 'Fecha pasada';
+        breakdownBody.innerHTML = `<div class="text-danger small"><i class="bi bi-exclamation-triangle me-1"></i>La fecha de inicio no puede ser anterior al día de hoy.</div>`;
+        return;
+    }
+
     if (endDate < startDate) {
         badge.className = 'badge bg-danger';
         badge.textContent = 'Fechas inválidas';
-        breakdownBody.innerHTML = `<div class="text-danger">La fecha de fin debe ser igual o posterior a la fecha de inicio.</div>`;
+        breakdownBody.innerHTML = `<div class="text-danger small"><i class="bi bi-exclamation-triangle me-1"></i>La fecha de fin debe ser igual o posterior a la fecha de inicio.</div>`;
+        return;
+    }
+
+    const startMs = new Date(startDate + 'T00:00:00').getTime();
+    const endMs = new Date(endDate + 'T00:00:00').getTime();
+    const days = Math.floor((endMs - startMs) / 86400000) + 1;
+
+    if (days > MAX_CONTINUOUS_RENTAL_DAYS) {
+        badge.className = 'badge bg-danger';
+        badge.textContent = 'Límite excedido';
+        breakdownBody.innerHTML = `<div class="text-danger small"><i class="bi bi-exclamation-triangle me-1"></i>El período máximo de alquiler continuo es de ${MAX_CONTINUOUS_RENTAL_DAYS} días (3 meses).</div>`;
         return;
     }
 

@@ -47,9 +47,39 @@ document.addEventListener('DOMContentLoaded', async () => {
     deniedCard?.classList.add('d-none');
     protectedContent?.classList.remove('d-none');
 
+    initAdminDateBounds();
     bindEvents();
     await loadAllAdminData();
 });
+
+function initAdminDateBounds() {
+    const today = new Date();
+    const todayIso = today.toISOString().substring(0, 10);
+    const minHistoricalIso = '2023-01-01'; // Inicio del registro contable de la plataforma
+
+    const fromInput = document.getElementById('revFromDate');
+    const toInput = document.getElementById('revToDate');
+
+    if (fromInput) {
+        fromInput.min = minHistoricalIso;
+        fromInput.max = todayIso;
+        fromInput.addEventListener('change', () => {
+            if (toInput && fromInput.value) {
+                toInput.min = fromInput.value;
+            }
+        });
+    }
+
+    if (toInput) {
+        toInput.min = minHistoricalIso;
+        toInput.max = todayIso;
+        toInput.addEventListener('change', () => {
+            if (fromInput && toInput.value) {
+                fromInput.max = toInput.value;
+            }
+        });
+    }
+}
 
 function bindEvents() {
     document.getElementById('refreshAdminDashboardBtn')?.addEventListener('click', () => loadAllAdminData());
