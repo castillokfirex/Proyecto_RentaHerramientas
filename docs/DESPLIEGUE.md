@@ -46,8 +46,8 @@ graph TD
 
 1. **Clonar el repositorio y ubicarse en la raíz**:
    ```bash
-   git clone <URL_REPOSITORIO>
-   cd Proyecto_RentaHerramientas
+   git clone https://github.com/castillokfirex/Proyecto_RentaHerramientas_kevin_castillo_daniel_gamboa.git
+   cd Proyecto_RentaHerramientas_kevin_castillo_daniel_gamboa
    ```
 
 2. **Levantar los contenedores enlazados**:

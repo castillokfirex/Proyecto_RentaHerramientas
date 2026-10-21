@@ -317,8 +317,8 @@ Es la forma más rápida y reproducible de iniciar la plataforma, ya que compila
 
 1. **Clonar el repositorio**:
    ```bash
-   git clone https://github.com/tu-usuario/Proyecto_RentaHerramientas.git
-   cd Proyecto_RentaHerramientas
+   git clone https://github.com/castillokfirex/Proyecto_RentaHerramientas_kevin_castillo_daniel_gamboa.git
+   cd Proyecto_RentaHerramientas_kevin_castillo_daniel_gamboa
    ```
 
 2. **Compilar y levantar todos los servicios**:
