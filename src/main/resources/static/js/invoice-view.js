@@ -224,11 +224,30 @@ function renderActiveInvoice(inv) {
         emptyEl?.classList.remove('d-none');
         contentEl?.classList.add('d-none');
         if (submitPayBtn) submitPayBtn.disabled = true;
+        const kpiFacturado = document.getElementById('kpiFacturado');
+        const kpiPagado = document.getElementById('kpiPagado');
+        const kpiSaldo = document.getElementById('kpiSaldo');
+        if (kpiFacturado) kpiFacturado.textContent = 'S/ 0.00';
+        if (kpiPagado) kpiPagado.textContent = 'S/ 0.00';
+        if (kpiSaldo) {
+            kpiSaldo.textContent = 'S/ 0.00';
+            kpiSaldo.className = 'rt-inv-kpi-value text-dark mb-0';
+        }
         return;
     }
 
     emptyEl?.classList.add('d-none');
     contentEl?.classList.remove('d-none');
+
+    const kpiFacturado = document.getElementById('kpiFacturado');
+    const kpiPagado = document.getElementById('kpiPagado');
+    const kpiSaldo = document.getElementById('kpiSaldo');
+    if (kpiFacturado) kpiFacturado.textContent = formatMoney(inv.total);
+    if (kpiPagado) kpiPagado.textContent = formatMoney(inv.netPaid);
+    if (kpiSaldo) {
+        kpiSaldo.textContent = formatMoney(inv.balance);
+        kpiSaldo.className = Number(inv.balance || 0) > 0 ? 'rt-inv-kpi-value text-danger mb-0' : 'rt-inv-kpi-value text-success mb-0';
+    }
 
     document.getElementById('invReservationId').textContent = inv.reservationId || '—';
     document.getElementById('invTypeBadge').textContent = inv.type || 'RENTAL';
@@ -323,6 +342,10 @@ function renderActiveInvoice(inv) {
 }
 
 function renderSecurityDepositPanel(dep) {
+    const kpiGarantia = document.getElementById('kpiGarantia');
+    if (kpiGarantia) {
+        kpiGarantia.textContent = dep ? formatMoney(dep.balance || dep.requiredAmount || 0) : 'S/ 0.00';
+    }
     const card = document.getElementById('securityDepositCard');
     const badge = document.getElementById('depositStatusBadge');
     const body = document.getElementById('depositSummaryBody');
