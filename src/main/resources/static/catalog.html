@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo de Herramientas | RentaTools</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
     <!-- Bootstrap 5.3 CSS & Icons CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -16,52 +19,70 @@
     <!-- Contenedor de Alertas ProblemDetail (RFC 9457) -->
     <div id="rt-alert-container" aria-live="polite"></div>
 
-    <!-- Hero con Buscador FULLTEXT y Showcase 3D de Herramientas -->
+    <!-- Hero con Fondo Cinemático, Buscador Pill y Dock de Categorías -->
     <section class="rt-hero py-5">
         <div class="container">
-            <div class="row align-items-center g-4">
+            <div class="row align-items-center g-4 mb-4">
                 <div class="col-lg-7">
-                    <div class="rt-hero-badge mb-3">
-                        <i class="bi bi-lightning-charge-fill text-warning"></i>
-                        <span>Alquiler Industrial &amp; Construcción Certificada</span>
+                    <div class="rt-hero-tag mb-2">
+                        <i class="bi bi-gear-fill text-warning me-1"></i>
+                        <span>HERRAMIENTAS PROFESIONALES, CUANDO LAS NECESITAS</span>
                     </div>
-                    <h1 class="rt-hero-title mb-3">Equipos y Herramientas Profesionales</h1>
+                    <h1 class="rt-hero-title mb-3">
+                        Alquila las mejores <br class="d-none d-md-inline">
+                        <span class="text-warning">herramientas y maquinaria</span>
+                    </h1>
                     <p class="rt-hero-desc mb-4">
-                        Explora maquinaria verificada con número de serie física. Cotiza al instante con tarifas transparentes por día, semana o mes y asegura la continuidad de tus proyectos en obra.
+                        En RentaTools te conectamos con equipos de alta calidad para que lleves tus proyectos al siguiente nivel. Renta fácil, rápido y seguro.
                     </p>
                     
-                    <form id="catalogSearchForm" class="rt-search-box mb-3">
+                    <form id="catalogSearchForm" class="rt-search-pill mb-4">
                         <div class="input-group align-items-center">
                             <span class="input-group-text bg-transparent border-0 ps-3 pe-2">
                                 <i class="bi bi-search text-warning fs-5"></i>
                             </span>
                             <input type="search" id="searchQueryInput" class="form-control border-0 rt-search-input"
                                    placeholder="Buscar por nombre, marca, modelo o descripción..." autocomplete="off">
-                            <button type="submit" class="btn btn-rt-primary px-4 py-2 rounded-3 me-1">
-                                <i class="bi bi-search me-1 d-none d-sm-inline"></i> Buscar
+                            <button type="submit" class="btn rt-btn-search px-4 py-2 fw-semibold rounded-pill me-1">
+                                Buscar <i class="bi bi-arrow-right ms-1"></i>
                             </button>
                         </div>
                     </form>
 
-                    <div class="d-flex flex-wrap gap-2 pt-1">
-                        <span class="rt-feature-pill"><i class="bi bi-shield-check text-warning"></i> Garantía Transparente</span>
-                        <span class="rt-feature-pill"><i class="bi bi-lightning-charge text-warning"></i> Cotización en Tiempo Real</span>
-                        <span class="rt-feature-pill"><i class="bi bi-upc-scan text-warning"></i> Control por Serie Física</span>
+                    <!-- 3 Trust Badges -->
+                    <div class="d-flex flex-wrap gap-4 pt-1">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rt-trust-icon-box">
+                                <i class="bi bi-shield-check text-warning"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-white small">Equipos certificados</div>
+                                <div class="text-secondary" style="font-size: 0.72rem;">Calidad garantizada</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rt-trust-icon-box">
+                                <i class="bi bi-truck text-warning"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-white small">Entrega y recolección</div>
+                                <div class="text-secondary" style="font-size: 0.72rem;">Según disponibilidad</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rt-trust-icon-box">
+                                <i class="bi bi-credit-card text-warning"></i>
+                            </div>
+                            <div>
+                                <div class="fw-bold text-white small">Pagos seguros</div>
+                                <div class="text-secondary" style="font-size: 0.72rem;">Múltiples métodos</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-lg-5">
-                    <div class="rt-hero-3d-card">
-                        <div class="rt-hero-3d-glow"></div>
-                        <img src="images/hero-tool-3d.png" alt="Herramienta Industrial 3D RentaTools" class="rt-hero-3d-img" loading="eager">
-                        <div class="rt-hero-pill-badge">
-                            <div class="d-flex align-items-center gap-2">
-                                <span class="rt-dot-pulse"></span>
-                                <span class="small fw-semibold text-white">Línea Pro Industrial 18V</span>
-                            </div>
-                            <span class="badge bg-warning text-dark fw-bold px-2 py-1 small">Disponibilidad Inmediata</span>
-                        </div>
-                    </div>
+                <div class="col-lg-5 text-center text-lg-end d-flex align-items-center justify-content-lg-end justify-content-center">
+                    <div class="rt-hero-script-tag">Tu proyecto no se detiene</div>
                 </div>
             </div>
         </div>
@@ -153,6 +174,54 @@
             </section>
         </div>
     </main>
+
+    <!-- Sección de Valor: ¿Por qué elegir RentaTools? (Inspiración UI) -->
+    <section id="por-que-elegir" class="rt-value-prop-section py-5">
+        <div class="container">
+            <div class="d-flex align-items-center gap-2 mb-4">
+                <span class="rt-section-accent-line"></span>
+                <h2 class="h4 fw-bold mb-0 text-dark">¿Por qué elegir RentaTools?</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card rt-benefit-card h-100 p-4 border-0">
+                        <div class="rt-benefit-icon-wrapper mb-3">
+                            <i class="bi bi-lightning-charge-fill text-warning fs-3"></i>
+                        </div>
+                        <h3 class="h6 fw-bold mb-1 text-dark">Ahorra dinero</h3>
+                        <p class="text-secondary small mb-0">Sin grandes inversiones de capital para equipar tus proyectos y obras.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card rt-benefit-card h-100 p-4 border-0">
+                        <div class="rt-benefit-icon-wrapper mb-3">
+                            <i class="bi bi-shield-check text-warning fs-3"></i>
+                        </div>
+                        <h3 class="h6 fw-bold mb-1 text-dark">Mayor flexibilidad</h3>
+                        <p class="text-secondary small mb-0">Renta por día, semana o mes según las necesidades reales de tu cronograma.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card rt-benefit-card h-100 p-4 border-0">
+                        <div class="rt-benefit-icon-wrapper mb-3">
+                            <i class="bi bi-star-fill text-warning fs-3"></i>
+                        </div>
+                        <h3 class="h6 fw-bold mb-1 text-dark">Equipos de calidad</h3>
+                        <p class="text-secondary small mb-0">Marcas profesionales líderes inspeccionadas y certificadas por técnicos.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3">
+                    <div class="card rt-benefit-card h-100 p-4 border-0">
+                        <div class="rt-benefit-icon-wrapper mb-3">
+                            <i class="bi bi-headset text-warning fs-3"></i>
+                        </div>
+                        <h3 class="h6 fw-bold mb-1 text-dark">Soporte personalizado</h3>
+                        <p class="text-secondary small mb-0">Te asesoramos técnicamente en todo momento para la selección adecuada.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Modal Cotizador y Reserva Directa -->
     <div class="modal fade" id="quoteModal" tabindex="-1" aria-labelledby="quoteModalLabel" aria-hidden="true">

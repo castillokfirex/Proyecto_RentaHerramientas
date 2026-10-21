@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel del Proveedor | RentaTools</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="images/logo.png">
+    <link rel="apple-touch-icon" href="images/logo.png">
     <!-- Bootstrap 5.3 CSS & Icons CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
@@ -16,35 +19,35 @@
     <!-- Contenedor de Alertas ProblemDetail (RFC 9457) -->
     <div id="rt-alert-container" aria-live="polite"></div>
 
-    <!-- Encabezado -->
-    <section class="rt-hero py-4">
-        <div class="container d-flex flex-wrap justify-content-between align-items-center gap-3">
+    <!-- Encabezado y Hero del Proveedor -->
+    <section class="rt-prov-hero py-4">
+        <div class="container rt-prov-hero-container">
             <div>
-                <span class="badge bg-warning text-dark mb-1 fw-semibold">
-                    <i class="bi bi-briefcase-fill me-1"></i>Operaciones de Proveedor
+                <span class="rt-prov-badge-role">
+                    <i class="bi bi-briefcase-fill"></i> Operaciones de Proveedor
                 </span>
-                <h1 class="h3 fw-bold mb-1">Panel de Gestión de Inventario y Alquileres</h1>
-                <p class="text-white-50 small mb-0">
+                <h1 class="rt-prov-hero-title">Panel de Gestión de Inventario y Alquileres</h1>
+                <p class="rt-prov-hero-desc">
                     Administra herramientas, tarifas, unidades con número de serie, solicitudes de reserva e inspecciones de entrega/devolución.
                 </p>
             </div>
-            <div class="d-flex gap-2">
-                <button type="button" id="openCreateToolBtn" class="btn btn-rt-primary btn-sm">
-                    <i class="bi bi-plus-lg me-1"></i>Nueva Herramienta
+            <div class="rt-prov-hero-actions">
+                <button type="button" id="openCreateToolBtn" class="rt-prov-btn-primary">
+                    <i class="bi bi-plus-lg"></i> Nueva Herramienta
                 </button>
-                <button type="button" id="refreshDashboardBtn" class="btn btn-outline-light btn-sm">
-                    <i class="bi bi-arrow-clockwise me-1"></i>Sincronizar Todo
+                <button type="button" id="refreshDashboardBtn" class="rt-prov-btn-secondary">
+                    <i class="bi bi-arrow-clockwise"></i> Sincronizar Todo
                 </button>
             </div>
         </div>
     </section>
 
-    <main class="container my-4 flex-grow-1">
+    <main class="container my-4 flex-grow-1 rt-prov-main-container">
         <!-- Banner no autenticado -->
-        <div id="providerUnauthBanner" class="card rt-card p-5 text-center d-none mb-4">
+        <div id="providerUnauthBanner" class="card rt-card rt-prov-unauth-card p-5 text-center d-none mb-4">
             <i class="bi bi-shield-lock display-5 text-warning mb-2"></i>
-            <h2 class="h5 fw-bold">Acceso para Proveedores</h2>
-            <p class="text-muted small mb-3">
+            <h2 class="h5 fw-bold text-white">Acceso para Proveedores</h2>
+            <p class="text-white-50 small mb-3">
                 Inicia sesión con una cuenta que posea el rol <strong>PROVEEDOR</strong> para gestionar tu catálogo, unidades y reservas.
             </p>
             <div>
@@ -55,52 +58,75 @@
         </div>
 
         <!-- Pestañas Principales del Panel -->
-        <ul class="nav nav-tabs mb-4" id="providerDashboardTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active fw-semibold" id="tab-tools-btn" data-bs-toggle="tab"
-                        data-bs-target="#pane-tools" type="button" role="tab">
-                    <i class="bi bi-tools me-1"></i>1. Mis Herramientas y Tarifas
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link fw-semibold" id="tab-units-btn" data-bs-toggle="tab"
-                        data-bs-target="#pane-units" type="button" role="tab">
-                    <i class="bi bi-upc-scan me-1"></i>2. Gestión de Unidades Físicas
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link fw-semibold" id="tab-requests-btn" data-bs-toggle="tab"
-                        data-bs-target="#pane-requests" type="button" role="tab">
-                    <i class="bi bi-inbox me-1"></i>3. Bandeja de Solicitudes
-                    <span id="pendingRequestsBadge" class="badge bg-warning text-dark ms-1">0</span>
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link fw-semibold" id="tab-inspections-btn" data-bs-toggle="tab"
-                        data-bs-target="#pane-inspections" type="button" role="tab">
-                    <i class="bi bi-clipboard2-check me-1"></i>4. Módulo de Inspecciones (Entrega / Devolución)
-                </button>
-            </li>
-        </ul>
+        <div class="rt-prov-tabs-wrapper">
+            <ul class="nav nav-tabs rt-prov-nav-tabs" id="providerDashboardTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="tab-tools-btn" data-bs-toggle="tab"
+                            data-bs-target="#pane-tools" type="button" role="tab" aria-selected="true">
+                        <i class="bi bi-tools"></i> 1. Mis Herramientas y Tarifas
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-units-btn" data-bs-toggle="tab"
+                            data-bs-target="#pane-units" type="button" role="tab" aria-selected="false">
+                        <i class="bi bi-upc-scan"></i> 2. Gestión de Unidades Físicas
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-requests-btn" data-bs-toggle="tab"
+                            data-bs-target="#pane-requests" type="button" role="tab" aria-selected="false">
+                        <i class="bi bi-inbox"></i> 3. Bandeja de Solicitudes
+                        <span id="pendingRequestsBadge" class="badge bg-warning text-dark ms-1">0</span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="tab-inspections-btn" data-bs-toggle="tab"
+                            data-bs-target="#pane-inspections" type="button" role="tab" aria-selected="false">
+                        <i class="bi bi-clipboard2-check"></i> 4. Módulo de Inspecciones (Entrega / Devolución)
+                    </button>
+                </li>
+            </ul>
+        </div>
 
-        <div class="tab-content" id="providerDashboardTabContent">
+        <div class="tab-content rt-prov-tab-content-wrap" id="providerDashboardTabContent">
             <!-- PESTAÑA 1: GESTIÓN DE HERRAMIENTAS -->
             <div class="tab-pane fade show active" id="pane-tools" role="tabpanel">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="h5 fw-bold mb-0">Mis Herramientas Registradas</h2>
-                    <span id="providerToolsCount" class="small text-muted"></span>
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3 rt-prov-section-header">
+                    <div>
+                        <h2 class="h4 fw-bold text-dark mb-1">Mis herramientas y tarifas</h2>
+                        <p class="text-muted small mb-0">Gestiona tu catálogo de herramientas, especificaciones técnicas y tarifas de alquiler.</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span id="providerToolsCount" class="badge bg-light text-dark border px-3 py-2 fw-semibold"></span>
+                        <button type="button" class="btn btn-rt-primary btn-sm px-3 py-2 fw-semibold" onclick="document.getElementById('openCreateToolBtn')?.click()">
+                            <i class="bi bi-plus-lg me-1"></i>Registrar herramienta
+                        </button>
+                    </div>
                 </div>
                 <div id="providerToolsGrid" class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-3"></div>
             </div>
 
             <!-- PESTAÑA 2: GESTIÓN DE UNIDADES FÍSICAS -->
             <div class="tab-pane fade" id="pane-units" role="tabpanel">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 rt-prov-section-header">
+                    <div>
+                        <h2 class="h4 fw-bold text-dark mb-1">Gestión de unidades físicas</h2>
+                        <p class="text-muted small mb-0">Registra números de serie únicos y administra el ciclo operativo (Disponible, Mantenimiento, De Baja).</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-light text-secondary border px-3 py-2 fw-semibold">
+                            <i class="bi bi-upc-scan me-1 text-warning"></i>Control de inventario serializado
+                        </span>
+                    </div>
+                </div>
+
                 <div class="row g-4">
                     <!-- Registrar Nueva Unidad -->
                     <div class="col-lg-5">
-                        <div class="card rt-card p-3">
-                            <h3 class="h6 fw-bold mb-3">
-                                <i class="bi bi-plus-square text-warning me-2"></i>Registrar Unidad Física (Serial)
+                        <div class="card rt-card rt-prov-card p-4">
+                            <h3 class="h6 fw-bold mb-3 d-flex align-items-center gap-2">
+                                <span class="rt-prov-card-icon"><i class="bi bi-plus-square-fill text-warning"></i></span>
+                                <span>Registrar Unidad Física (Serial)</span>
                             </h3>
                             <form id="registerUnitForm">
                                 <div class="mb-3">
@@ -124,7 +150,7 @@
                                               maxlength="500" placeholder="Estado inicial, maletín incluido, etc."></textarea>
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-rt-primary btn-sm">
+                                    <button type="submit" class="btn btn-rt-primary btn-sm py-2 fw-semibold">
                                         <i class="bi bi-check2-circle me-1"></i>Registrar Serial en Inventario
                                     </button>
                                 </div>
@@ -134,9 +160,10 @@
 
                     <!-- Cambiar Estado Operativo y Listado de Unidades -->
                     <div class="col-lg-7">
-                        <div class="card rt-card p-3 mb-3">
-                            <h3 class="h6 fw-bold mb-3">
-                                <i class="bi bi-sliders text-warning me-2"></i>Cambio de Estado Operativo (AVAILABLE / MAINTENANCE / RETIRED)
+                        <div class="card rt-card rt-prov-card p-4 mb-4">
+                            <h3 class="h6 fw-bold mb-3 d-flex align-items-center gap-2">
+                                <span class="rt-prov-card-icon"><i class="bi bi-sliders text-warning"></i></span>
+                                <span>Cambio de Estado Operativo</span>
                             </h3>
                             <form id="changeUnitStatusForm" class="row g-2 align-items-end">
                                 <div class="col-md-6">
@@ -161,30 +188,32 @@
                                 <div class="col-md-5">
                                     <label for="statusNotesInput" class="form-label small fw-semibold">Motivo / Nota</label>
                                     <input type="text" id="statusNotesInput" class="form-control form-control-sm"
-                                           maxlength="500" placeholder="Ej. Cambio de carbones / mantenimiento preventivo">
+                                           maxlength="500" placeholder="Ej. Cambio de carbones / preventivo">
                                 </div>
                                 <div class="col-md-3 d-grid">
-                                    <button type="submit" class="btn btn-dark btn-sm">
-                                        <i class="bi bi-arrow-repeat me-1"></i>Aplicar Estado
+                                    <button type="submit" class="btn btn-dark btn-sm py-2 fw-semibold">
+                                        <i class="bi bi-arrow-repeat me-1"></i>Aplicar
                                     </button>
                                 </div>
                             </form>
                         </div>
 
-                        <div class="card rt-card p-3">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h4 class="h6 fw-bold mb-0">Unidades Físicas Conocidas / Recientes</h4>
-                                <span class="small text-muted">Haz clic en "Seleccionar" para cambiar su estado</span>
+                        <div class="card rt-card rt-prov-card p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h4 class="h6 fw-bold mb-0">Unidades Físicas Conocidas / Recientes</h4>
+                                    <p class="small text-muted mb-0">Haz clic en "Seleccionar" para cambiar su estado operativo</p>
+                                </div>
                             </div>
                             <div class="table-responsive">
-                                <table class="table table-sm align-middle small mb-0">
-                                    <thead class="table-light">
+                                <table class="table table-hover table-sm align-middle small mb-0 rt-prov-table">
+                                    <thead>
                                         <tr>
                                             <th>Herramienta</th>
                                             <th>Serie</th>
                                             <th>Estado</th>
                                             <th>UUID Unidad</th>
-                                            <th class="text-end">Acción Rápida</th>
+                                            <th class="text-end">Acción</th>
                                         </tr>
                                     </thead>
                                     <tbody id="knownUnitsTableBody"></tbody>
@@ -197,9 +226,19 @@
 
             <!-- PESTAÑA 3: BANDEJA DE SOLICITUDES -->
             <div class="tab-pane fade" id="pane-requests" role="tabpanel">
-                <div class="card rt-card p-3 mb-3">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 rt-prov-section-header">
+                    <div>
+                        <h2 class="h4 fw-bold text-dark mb-1">Bandeja de solicitudes de reserva</h2>
+                        <p class="text-muted small mb-0">Revisa, confirma o rechaza solicitudes de clientes y realiza seguimiento a reservas activas.</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span id="providerReservationsCount" class="badge bg-light text-dark border px-3 py-2 fw-semibold"></span>
+                    </div>
+                </div>
+
+                <div class="card rt-card rt-prov-card p-3 mb-4">
                     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
-                        <div class="d-flex flex-wrap gap-1" id="providerResFilterGroup">
+                        <div class="d-flex flex-wrap gap-1 rt-prov-filter-group" id="providerResFilterGroup">
                             <button type="button" class="btn btn-sm btn-dark active" data-status="">Todas</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary" data-status="PENDING">PENDING (Por Aprobar)</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary" data-status="CONFIRMED">CONFIRMED</button>
@@ -208,7 +247,6 @@
                             <button type="button" class="btn btn-sm btn-outline-secondary" data-status="RETURNED">RETURNED</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary" data-status="CLOSED">CLOSED</button>
                         </div>
-                        <span id="providerReservationsCount" class="small text-muted fw-semibold"></span>
                     </div>
                 </div>
 
@@ -217,12 +255,25 @@
 
             <!-- PESTAÑA 4: MÓDULO DE INSPECCIONES (ENTREGA Y DEVOLUCIÓN) -->
             <div class="tab-pane fade" id="pane-inspections" role="tabpanel">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 rt-prov-section-header">
+                    <div>
+                        <h2 class="h4 fw-bold text-dark mb-1">Módulo de inspecciones técnicas</h2>
+                        <p class="text-muted small mb-0">Genera actas de entrega (DELIVERY) y devolución (RETURN) con registro fotográfico y cálculo de mora.</p>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-light text-secondary border px-3 py-2 fw-semibold">
+                            <i class="bi bi-shield-check me-1 text-success"></i>Actas auditables con evidencia
+                        </span>
+                    </div>
+                </div>
+
                 <div class="row g-4">
                     <!-- Formulario de Registro de Inspección -->
                     <div class="col-lg-7">
-                        <div class="card rt-card p-3">
-                            <h3 class="h6 fw-bold mb-3">
-                                <i class="bi bi-clipboard2-pulse text-warning me-2"></i>Registrar Acta de Inspección (DELIVERY / RETURN)
+                        <div class="card rt-card rt-prov-card p-4">
+                            <h3 class="h6 fw-bold mb-3 d-flex align-items-center gap-2">
+                                <span class="rt-prov-card-icon"><i class="bi bi-clipboard2-pulse-fill text-warning"></i></span>
+                                <span>Registrar Acta de Inspección (DELIVERY / RETURN)</span>
                             </h3>
                             <form id="inspectionForm">
                                 <div class="row g-3 mb-3">
@@ -258,11 +309,14 @@
                                 </div>
 
                                 <!-- Panel Visual de Cálculo de Mora (Visible en RETURN) -->
-                                <div id="lateFeeCalculatorBox" class="alert alert-warning py-2 px-3 small mb-3 d-none">
-                                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-1">
-                                        <strong><i class="bi bi-clock-history me-1"></i>Simulador Visual de Mora por Devolución Tardía (×1.5)</strong>
-                                        <div class="d-flex align-items-center gap-1">
-                                            <label for="simulatedReturnDate" class="small mb-0">Fecha devolución:</label>
+                                <div id="lateFeeCalculatorBox" class="alert alert-warning py-3 px-3 small mb-3 d-none rt-prov-latefee-box">
+                                    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                                        <strong class="d-flex align-items-center gap-1 text-dark">
+                                            <i class="bi bi-clock-history text-warning fs-6"></i>
+                                            Simulador Visual de Mora por Devolución Tardía (×1.5)
+                                        </strong>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <label for="simulatedReturnDate" class="small mb-0 fw-semibold text-secondary">Fecha devolución:</label>
                                             <input type="date" id="simulatedReturnDate" class="form-control form-control-sm" style="width: 145px;">
                                         </div>
                                     </div>
@@ -271,18 +325,20 @@
 
                                 <!-- Checklist de Inspección -->
                                 <div class="mb-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-1">
-                                        <label class="form-label small fw-bold mb-0">Checklist Técnico de Verificación</label>
-                                        <button type="button" id="markAllChecklistOkBtn" class="btn btn-link btn-sm p-0 text-decoration-none">
-                                            Marcar todo OK
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="form-label small fw-bold mb-0">
+                                            <i class="bi bi-list-check me-1 text-primary"></i>Checklist Técnico de Verificación
+                                        </label>
+                                        <button type="button" id="markAllChecklistOkBtn" class="btn btn-outline-success btn-sm py-0 px-2 fw-semibold">
+                                            <i class="bi bi-check-all me-1"></i>Marcar todo OK
                                         </button>
                                     </div>
-                                    <div class="table-responsive border rounded">
-                                        <table class="table table-sm mb-0 small">
+                                    <div class="table-responsive border rounded-3 overflow-hidden">
+                                        <table class="table table-sm table-hover mb-0 small rt-prov-checklist-table">
                                             <thead class="table-light">
                                                 <tr>
                                                     <th>Ítem</th>
-                                                    <th style="width: 165px;">Resultado</th>
+                                                    <th style="width: 175px;">Resultado</th>
                                                     <th>Observación del Ítem</th>
                                                 </tr>
                                             </thead>
@@ -298,19 +354,20 @@
                                               placeholder="Detalla el estado de entrega o cualquier hallazgo en la devolución..."></textarea>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="inspPhotosInput" class="form-label small fw-semibold">
-                                        Fotografías de Evidencia (JPEG, PNG, WEBP · máx. 5 MB c/u)
+                                <div class="mb-4">
+                                    <label for="inspPhotosInput" class="form-label small fw-semibold d-flex justify-content-between">
+                                        <span>Fotografías de Evidencia (JPEG, PNG, WEBP · máx. 5 MB c/u)</span>
+                                        <span class="text-muted"><i class="bi bi-camera me-1"></i>Múltiples archivos</span>
                                     </label>
                                     <input type="file" id="inspPhotosInput" class="form-control form-control-sm"
                                            accept="image/jpeg,image/png,image/webp" multiple>
-                                    <div class="form-text">
-                                        Las fotos seleccionadas se subirán automáticamente tras registrar el acta (`POST /api/v1/inspections/{id}/photos`).
+                                    <div class="form-text small">
+                                        Las fotos seleccionadas se subirán automáticamente tras registrar el acta (<code>POST /api/v1/inspections/{id}/photos</code>).
                                     </div>
                                 </div>
 
                                 <div class="d-grid">
-                                    <button type="submit" id="submitInspectionBtn" class="btn btn-rt-primary">
+                                    <button type="submit" id="submitInspectionBtn" class="btn btn-rt-primary py-2 fw-semibold">
                                         <i class="bi bi-file-earmark-check me-1"></i>Registrar Inspección y Subir Evidencias
                                     </button>
                                 </div>
@@ -320,9 +377,10 @@
 
                     <!-- Historial de Inspecciones de la Reserva Seleccionada y Subida Adicional de Fotos -->
                     <div class="col-lg-5">
-                        <div class="card rt-card p-3">
-                            <h3 class="h6 fw-bold mb-3">
-                                <i class="bi bi-journal-check text-warning me-2"></i>Inspecciones de la Reserva Seleccionada
+                        <div class="card rt-card rt-prov-card p-4">
+                            <h3 class="h6 fw-bold mb-3 d-flex align-items-center gap-2">
+                                <span class="rt-prov-card-icon"><i class="bi bi-journal-check text-warning"></i></span>
+                                <span>Inspecciones de la Reserva Seleccionada</span>
                             </h3>
                             <div id="reservationInspectionsHistory" class="small">
                                 <p class="text-muted mb-0">Selecciona una reserva a la izquierda para consultar sus actas y fotos de evidencia.</p>

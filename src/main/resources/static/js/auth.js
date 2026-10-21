@@ -443,48 +443,67 @@ export function renderNavbar(activePage = '') {
         ? user.roles.map(r => `<span class="badge bg-warning text-dark ms-1">${escapeHtml(r)}</span>`).join('')
         : '';
 
+    // Garantizar favicon en la pestaña
+    if (!document.querySelector("link[rel*='icon']")) {
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = 'image/png';
+        link.href = 'images/logo.png';
+        document.head.appendChild(link);
+    }
+
     navHost.innerHTML = `
         <nav class="navbar navbar-expand-lg navbar-dark rt-navbar d-print-none">
             <div class="container">
-                <a class="navbar-brand d-flex align-items-center gap-2 fw-bold" href="catalog.html">
-                    <span class="rt-brand-badge"><i class="bi bi-tools"></i> RT</span>
-                    <span class="fw-bold tracking-tight">RentaTools</span>
+                <a class="navbar-brand d-flex align-items-center gap-2" href="catalog.html">
+                    <span class="rt-brand-badge-hex">
+                        <i class="bi bi-tools text-warning fs-5"></i>
+                    </span>
+                    <div class="d-flex flex-column">
+                        <span class="fw-bold fs-5 tracking-tight text-white lh-1">Renta<span class="text-warning">Tools</span></span>
+                        <span class="rt-brand-sub">RENTA DE HERRAMIENTAS</span>
+                    </div>
                 </a>
                 <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#rtNavbarContent"
                         aria-controls="rtNavbarContent" aria-expanded="false" aria-label="Alternar navegación">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="rtNavbarContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center gap-1 gap-lg-3">
                         <li class="nav-item">
-                            <a class="nav-link ${activePage === 'catalog' ? 'active fw-semibold text-warning' : ''}" href="catalog.html">
-                                <i class="bi bi-grid-3x3-gap me-1"></i>Catálogo
+                            <a class="nav-link rt-nav-link ${activePage === 'catalog' ? 'active' : ''}" href="catalog.html">
+                                <i class="bi bi-house-door me-1"></i>Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link rt-nav-link" href="catalog.html#toolsSection">
+                                <i class="bi bi-tools me-1"></i>Catálogo
                             </a>
                         </li>
                         ${(authenticated && (isClient || isAdmin)) ? `
                         <li class="nav-item">
-                            <a class="nav-link ${activePage === 'client-reservations' ? 'active fw-semibold text-warning' : ''}" href="client-reservations.html">
+                            <a class="nav-link rt-nav-link ${activePage === 'client-reservations' ? 'active' : ''}" href="client-reservations.html">
                                 <i class="bi bi-calendar2-check me-1"></i>Mis Reservas
                             </a>
                         </li>
                         ` : ''}
                         ${(authenticated && (isProvider || isAdmin)) ? `
                         <li class="nav-item">
-                            <a class="nav-link ${activePage === 'provider-dashboard' ? 'active fw-semibold text-warning' : ''}" href="provider-dashboard.html">
+                            <a class="nav-link rt-nav-link ${activePage === 'provider-dashboard' ? 'active' : ''}" href="provider-dashboard.html">
                                 <i class="bi bi-briefcase me-1"></i>Panel Proveedor
                             </a>
                         </li>
                         ` : ''}
                         ${(authenticated && isAdmin) ? `
                         <li class="nav-item">
-                            <a class="nav-link ${activePage === 'admin-dashboard' ? 'active fw-semibold text-warning' : ''}" href="admin-dashboard.html">
+                            <a class="nav-link rt-nav-link ${activePage === 'admin-dashboard' ? 'active' : ''}" href="admin-dashboard.html">
                                 <i class="bi bi-shield-check me-1"></i>Administración
                             </a>
                         </li>
                         ` : ''}
                         ${authenticated ? `
                         <li class="nav-item">
-                            <a class="nav-link ${activePage === 'invoice-view' ? 'active fw-semibold text-warning' : ''}" href="invoice-view.html">
+                            <a class="nav-link rt-nav-link ${activePage === 'invoice-view' ? 'active' : ''}" href="invoice-view.html">
                                 <i class="bi bi-receipt me-1"></i>Facturación
                             </a>
                         </li>
@@ -498,15 +517,13 @@ export function renderNavbar(activePage = '') {
                                 <span class="fw-medium">${escapeHtml(user?.fullName || user?.email || 'Usuario')}</span>
                                 ${rolesBadges}
                             </div>
-                            <a href="auth.html" class="btn btn-sm btn-outline-warning">
-                                <i class="bi bi-key me-1"></i>Cambiar Cuenta
-                            </a>
-                            <button type="button" class="btn btn-sm btn-danger" id="rtLogoutBtn">
-                                <i class="bi bi-box-arrow-right me-1"></i>Cerrar Sesión
+                            <button type="button" class="btn btn-sm btn-outline-danger rounded-3" id="rtLogoutBtn">
+                                <i class="bi bi-box-arrow-right me-1"></i>Salir
                             </button>
                         ` : `
-                            <a href="auth.html" class="btn btn-sm btn-rt-primary">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>Iniciar Sesión / Registrarse
+                            <a href="auth.html" class="btn rt-btn-nav-primary px-3 py-2 fw-semibold d-inline-flex align-items-center gap-2">
+                                <i class="bi bi-person-fill"></i>
+                                <span>Iniciar Sesión / Registrarse</span>
                             </a>
                         `}
                     </div>

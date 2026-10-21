@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 76" fill="none">
+  <!-- Símbolo RentaTools "R" con llave inglesa integrada -->
+  <g id="logo-mark" transform="translate(4, 2)">
+    <!-- Barra diagonal izquierda naranja industrial -->
+    <path d="M6 50 L26 24 L38 32 L22 58 L12 66 L6 50 Z" fill="#F59E0B"/>
+    <!-- Travesaño inferior naranja -->
+    <path d="M22 58 L38 32 L58 56 L46 66 L34 66 Z" fill="#F59E0B"/>
+    <!-- Brazo principal blanco de la R con llave estilizada -->
+    <path d="M18 18 C22 10 32 6 44 6 L58 6 C68 6 74 12 74 22 C74 32 66 38 56 40 L40 40 L30 52 L18 42 L32 26 L22 26 C19 26 18 22 18 18 Z" fill="#FFFFFF"/>
+    <!-- Hendidura / Cabeza de llave inglesa en el espacio negativo -->
+    <path d="M44 14 L54 14 C58 14 62 17 62 22 C62 27 58 30 54 30 L42 30 L48 24 L44 18 L40 22 L38 18 L44 14 Z" fill="#0B1220"/>
+    <circle cx="50" cy="22" r="3.5" fill="#F59E0B"/>
+  </g>
+
+  <!-- Tipografía de Marca -->
+  <g id="logo-text" transform="translate(88, 12)">
+    <!-- Renta (Blanco) -->
+    <text x="0" y="34" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="34" font-weight="800" fill="#FFFFFF" letter-spacing="-0.5">Renta<tspan fill="#F59E0B">Tools</tspan></text>
+    <!-- Subtítulo RENTA DE HERRAMIENTAS -->
+    <text x="2" y="49" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-size="8.5" font-weight="700" fill="#F59E0B" letter-spacing="3.2">RENTA DE HERRAMIENTAS</text>
+  </g>
+</svg>

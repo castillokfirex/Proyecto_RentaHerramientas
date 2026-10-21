@@ -219,6 +219,27 @@ function bindEvents() {
         refreshCatalogBtn.addEventListener('click', () => loadCatalogTools());
     }
 
+    document.querySelectorAll('.quick-cat-filter').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const kw = btn.getAttribute('data-keyword') || '';
+            const match = state.categories.find(c => c.name.toLowerCase().includes(kw.toLowerCase()));
+            if (match) {
+                state.selectedCategoryId = match.id;
+            } else {
+                state.searchQuery = kw;
+                const searchInput = document.getElementById('searchQueryInput');
+                if (searchInput) searchInput.value = kw;
+            }
+            state.page = 0;
+            renderCategoryTree();
+            loadCatalogTools();
+            const toolsSection = document.getElementById('toolsSection');
+            if (toolsSection) {
+                toolsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+
     const quoteStartDate = document.getElementById('quoteStartDate');
     const quoteEndDate = document.getElementById('quoteEndDate');
     const quoteQuantity = document.getElementById('quoteQuantity');
@@ -510,7 +531,7 @@ function renderToolsGrid(items) {
             <div class="col">
                 <article class="card rt-card group h-100 d-flex flex-column">
                     <div class="relative w-full h-48 bg-slate-950 flex items-center justify-center overflow-hidden border-b border-slate-800 p-2">
-                        <img src="${toolImgUrl}" alt="${escapeHtml(tool.name)}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" loading="lazy" onerror="this.onerror=null; this.src='/images/tools/fallback-equipment.png';" />
+                        <img src="${toolImgUrl}" alt="${escapeHtml(tool.name)}" class="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-300" loading="eager" onerror="this.onerror=null; this.src='/images/tools/fallback-equipment.png';" />
                         <span class="position-absolute top-0 end-0 m-2 rt-avail-badge ${availCount > 0 ? 'bg-success text-white' : 'bg-secondary text-white'}">
                             ${availCount > 0 ? '<span class="rt-dot-pulse"></span>' : '<i class="bi bi-x-circle me-1"></i>'}
                             ${availCount} disp.
@@ -544,13 +565,13 @@ function renderToolsGrid(items) {
                             <div class="col-4">
                                 <div class="rt-rate-box">
                                     <span class="rt-rate-label">Semana</span>
-                                    <span class="rt-rate-val">${weekRate != null ? formatMoney(weekRate) : 'Semanal'}</span>
+                                    <span class="rt-rate-val">${weekRate != null ? formatMoney(weekRate) : '—'}</span>
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="rt-rate-box">
                                     <span class="rt-rate-label">Mes</span>
-                                    <span class="rt-rate-val">${monthRate != null ? formatMoney(monthRate) : 'Mensual'}</span>
+                                    <span class="rt-rate-val">${monthRate != null ? formatMoney(monthRate) : '—'}</span>
                                 </div>
                             </div>
                         </div>
