@@ -25,6 +25,10 @@ const state = {
     quoteModalInstance: null
 };
 
+const MAX_ADVANCE_RESERVATION_DAYS = 90; // Máximo 3 meses de anticipación
+const MAX_CONTINUOUS_RENTAL_DAYS = 90;   // Máximo 3 meses de duración de alquiler continuo
+
+
 /**
  * Obtiene la URL de la imagen de una herramienta.
  * Si tool.imageUrl viene definida en el DTO la usa, de lo contrario genera el slug a partir del nombre.
@@ -61,7 +65,7 @@ if (typeof window !== 'undefined') {
 }
 
 
-document.addEventListener('DOMContentLoaded', async () => {
+function initCatalog() {
     renderNavbar('catalog');
 
     const quoteModalEl = document.getElementById('quoteModal');
@@ -72,14 +76,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     initDefaultDates();
     bindEvents();
 
-    await Promise.all([
-        loadCategories(),
-        loadCatalogTools()
-    ]);
-});
+    loadCategories();
+    loadCatalogTools();
+}
 
-const MAX_ADVANCE_RESERVATION_DAYS = 90; // Máximo 3 meses de anticipación
-const MAX_CONTINUOUS_RENTAL_DAYS = 90;   // Máximo 3 meses de duración de alquiler continuo
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCatalog);
+} else {
+    initCatalog();
+}
+
 
 function initDefaultDates() {
     const today = new Date();
@@ -758,13 +764,11 @@ async function triggerRealtimeQuote() {
     }
 
     // Cálculo estimado local para visitantes públicos aún no autenticados como CLIENTE
-    const startMs = new Date(startDate + 'T00:00:00').getTime();
-    const endMs = new Date(endDate + 'T00:00:00').getTime();
-    const days = Math.floor((endMs - startMs) / 86400000) + 1;
     const rates = tool.rates || {};
     const dailyRate = Number(rates.DAY ?? tool.dayRate ?? 0);
     const depositUnit = Number(tool.depositAmount ?? 0);
     const unitAgreed = computeEstimatedUnitAmount(days, dailyRate, rates.WEEK, rates.MONTH);
+
 
     badge.className = 'badge bg-warning text-dark';
     badge.textContent = 'Estimación Preliminar';
